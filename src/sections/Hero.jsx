@@ -3,8 +3,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Spline from "@splinetool/react-spline";
 import { useLang } from "../context/LanguageContext";
-import { t } from "../translations";
-
+import { t } from "../context/translations";
 const container = {
   hidden: {},
   show: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },

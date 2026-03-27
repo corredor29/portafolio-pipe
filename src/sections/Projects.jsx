@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import StarBackground from "../components/StarBackground";
 import { useLang } from "../context/LanguageContext";
-import { t } from "../translations";
+import { t } from "../context/translations";
 import n8n from "../assets/n8n.png";
 import hotel from "../assets/RinconCarmen.png";
 import fastapi from "../assets/pythonfastapi.webp";

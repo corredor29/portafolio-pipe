@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import foto from "../assets/portada.jpeg";
 import StarBackground from "../components/StarBackground";
 import { useLang } from "../context/LanguageContext";
-import { t } from "../translations";
+import { t } from "../context/translations";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
