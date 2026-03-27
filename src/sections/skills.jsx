@@ -1,756 +1,516 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 
-// ─── HABILIDADES con logos ────────────────────────────────────────────────────
-// Para usar logos reales, coloca la URL en `logo`. Si está vacío, usa el icono emoji.
-const ALL_SKILLS = [
-  { label: "Python",       type: "tech", color: "#3b82f6", icon: "🐍",
-    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" },
-  { label: "React",        type: "tech", color: "#60a5fa", icon: "⚛️",
-    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" },
-  { label: "JavaScript",   type: "tech", color: "#f59e0b", icon: "📜",
-    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" },
-  { label: "Tailwind CSS", type: "tech", color: "#06b6d4", icon: "🎨",
-    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" },
-  { label: "C#",           type: "tech", color: "#a855f7", icon: "🔷",
-    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" },
-  { label: "MySQL",        type: "tech", color: "#10b981", icon: "🗄️",
-    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" },
-  { label: "Git",          type: "tech", color: "#f97316", icon: "🌿",
-    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" },
-  { label: "Node.js",      type: "tech", color: "#84cc16", icon: "🟩",
-    logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" },
-  { label: "Liderazgo",    type: "soft", color: "#ec4899", icon: "👑", logo: "" },
-  { label: "Trabajo en equipo", type: "soft", color: "#8b5cf6", icon: "🤝", logo: "" },
-  { label: "Resolución de problemas", type: "soft", color: "#14b8a6", icon: "🧠", logo: "" },
-  { label: "Comunicación", type: "soft", color: "#f43f5e", icon: "💬", logo: "" },
-  { label: "Aprendizaje rápido", type: "soft", color: "#6366f1", icon: "⚡", logo: "" },
-  { label: "Trabajo bajo presión", type: "soft", color: "#d946ef", icon: "🔥", logo: "" },
-];
-
-// ─── CHIP DE HABILIDAD ────────────────────────────────────────────────────────
-function SkillChip({ skill }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.4, y: 12 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="flex items-center gap-2 px-3 py-1.5 rounded-xl border backdrop-blur-sm"
-      style={{
-        borderColor: `${skill.color}40`,
-        background: `${skill.color}15`,
-      }}
-    >
-      {skill.logo ? (
-        <img src={skill.logo} alt={skill.label}
-          style={{ width: 16, height: 16, objectFit: "contain" }} />
-      ) : (
-        <span style={{ fontSize: 13 }}>{skill.icon}</span>
-      )}
-      <span className="text-xs font-semibold whitespace-nowrap"
-        style={{ color: skill.color, fontFamily: "'Space Mono', monospace" }}>
-        {skill.label}
-      </span>
-      {skill.type === "soft" && (
-        <span className="text-[8px] px-1 py-0.5 rounded border"
-          style={{ color: `${skill.color}99`, borderColor: `${skill.color}30`,
-            fontFamily: "'Space Mono', monospace" }}>
-          soft
-        </span>
-      )}
-    </motion.div>
-  );
-}
-
-// ─── MOTOR 3D TENIS DE MESA ───────────────────────────────────────────────────
-function PingPongGame3D({ onHit }) {
+// ── Star Background ──────────────────────────────────────────────────────────
+function StarBackground({ density = 130 }) {
   const canvasRef = useRef(null);
-  const stateRef  = useRef(null);
-  const rafRef    = useRef(null);
-  const imagesRef = useRef({});
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx    = canvas.getContext("2d");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    let W = (canvas.width = window.innerWidth);
+    let H = (canvas.height = window.innerHeight);
+    let animId;
 
-    // Precargar logos
-    ALL_SKILLS.forEach(s => {
-      if (s.logo && !imagesRef.current[s.label]) {
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.src = s.logo;
-        imagesRef.current[s.label] = img;
-      }
-    });
+    const stars = Array.from({ length: density }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.4 + 0.2,
+      alpha: Math.random() * 0.6 + 0.15,
+      speed: Math.random() * 0.015 + 0.005,
+      phase: Math.random() * Math.PI * 2,
+    }));
 
-    const resize = () => {
-      canvas.width  = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+    const shoots = [];
+    let shootTimer = 0;
+
+    function spawnShoot() {
+      shoots.push({
+        x: Math.random() * W * 0.7,
+        y: Math.random() * H * 0.4,
+        len: Math.random() * 120 + 80,
+        speed: Math.random() * 6 + 8,
+        angle: Math.PI / 5 + (Math.random() * Math.PI) / 10,
+        alpha: 1,
+        life: 0,
+        maxLife: 60,
+      });
+    }
+
+    const onResize = () => {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
     };
-    resize();
-    const W = () => canvas.width;
-    const H = () => canvas.height;
+    window.addEventListener("resize", onResize);
 
-    // ── Proyección perspectiva 3D ──────────────────────────────────────────
-    // Coordenadas de mundo: x ∈ [-1,1], y ∈ [0,1] (profundidad), z ∈ [0,1] (altura)
-    // Cámara desde arriba y ligeramente adelante
-    const CAM_FOV   = 0.72;   // Factor de perspectiva
-    const CAM_Y_OFF = 0.38;   // Qué tan inclinada está la cámara
-    const TABLE_W   = 0.9;    // Ancho de la mesa en unidades de mundo
-    const TABLE_L   = 1.0;    // Largo
-    const BALL_R    = 0.038;  // Radio de la pelota en unidades
+    let frame = 0;
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      frame++;
 
-    function project(wx, wy, wz) {
-      // wy = profundidad [0=cerca, 1=lejos], wx = lado, wz = altura
-      const depth = wy * CAM_FOV + (1 - CAM_FOV);
-      const sx = W() * 0.5 + wx * W() * 0.44 * depth;
-      const sy = H() * (CAM_Y_OFF + wy * (1 - CAM_Y_OFF) * 0.78) - wz * H() * 0.22 * depth;
-      return { x: sx, y: sy, scale: depth };
-    }
-
-    // ── Estado del juego ───────────────────────────────────────────────────
-    const state = {
-      // Pelota: bx ∈ [-TABLE_W/2, TABLE_W/2], by ∈ [0,1] profundidad, bz altura
-      bx: 0, by: 0.15, bz: 0.12,
-      vx: 0.006, vy: 0.009, vz: -0.006, // vz: velocidad vertical (arco)
-      gravity: 0.00035,
-      // Paletas: posición en x dentro de la mesa
-      p1x: 0, p2x: 0,
-      p1Hit: 0, p2Hit: 0,
-      side: "p2",
-      ballScale: 1,
-      // Trazo de la pelota (trail)
-      trail: [],
-    };
-    stateRef.current = state;
-
-    // ── Gradientes y colores de mesa ────────────────────────────────────────
-    const TABLE_COLOR_NEAR = "#0d2144";
-    const TABLE_COLOR_FAR  = "#071428";
-    const LINE_COLOR       = "rgba(96,165,250,0.3)";
-    const NET_COLOR        = "rgba(148,163,184,0.6)";
-
-    // ── Dibujo de la mesa 3D ───────────────────────────────────────────────
-    function drawTable() {
-      // 4 esquinas de la mesa
-      const corners = [
-        project(-TABLE_W/2, 0,   0), // cerca-izq
-        project( TABLE_W/2, 0,   0), // cerca-der
-        project( TABLE_W/2, TABLE_L, 0), // lejos-der
-        project(-TABLE_W/2, TABLE_L, 0), // lejos-izq
-      ];
-
-      // Cara superior (superficie)
-      ctx.save();
-      const grad = ctx.createLinearGradient(0, corners[3].y, 0, corners[0].y);
-      grad.addColorStop(0, TABLE_COLOR_FAR);
-      grad.addColorStop(1, TABLE_COLOR_NEAR);
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.moveTo(corners[0].x, corners[0].y);
-      ctx.lineTo(corners[1].x, corners[1].y);
-      ctx.lineTo(corners[2].x, corners[2].y);
-      ctx.lineTo(corners[3].x, corners[3].y);
-      ctx.closePath();
-      ctx.fill();
-
-      // Borde de la mesa (grosor lateral)
-      const THICKNESS = 10;
-      ctx.fillStyle = "#0a1d38";
-      ctx.beginPath();
-      ctx.moveTo(corners[0].x, corners[0].y);
-      ctx.lineTo(corners[1].x, corners[1].y);
-      ctx.lineTo(corners[1].x, corners[1].y + THICKNESS);
-      ctx.lineTo(corners[0].x, corners[0].y + THICKNESS);
-      ctx.closePath();
-      ctx.fill();
-
-      // Borde brillante de frente
-      ctx.strokeStyle = "rgba(59,130,246,0.5)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(corners[0].x, corners[0].y);
-      ctx.lineTo(corners[1].x, corners[1].y);
-      ctx.stroke();
-
-      // Líneas de cancha
-      ctx.strokeStyle = LINE_COLOR;
-      ctx.lineWidth = 1;
-      // Borde exterior
-      ctx.beginPath();
-      ctx.moveTo(corners[0].x, corners[0].y);
-      ctx.lineTo(corners[3].x, corners[3].y);
-      ctx.lineTo(corners[2].x, corners[2].y);
-      ctx.lineTo(corners[1].x, corners[1].y);
-      ctx.stroke();
-      // Línea central longitudinal
-      const cm1 = project(0, 0,   0);
-      const cm2 = project(0, TABLE_L, 0);
-      ctx.beginPath();
-      ctx.moveTo(cm1.x, cm1.y);
-      ctx.lineTo(cm2.x, cm2.y);
-      ctx.stroke();
-
-      // ── Red 3D ──────────────────────────────────────────────────────────
-      const netY = TABLE_L * 0.5;
-      const NET_HEIGHT = 0.09;
-      const nl1 = project(-TABLE_W/2, netY, 0);
-      const nl2 = project(-TABLE_W/2, netY, NET_HEIGHT);
-      const nr1 = project( TABLE_W/2, netY, 0);
-      const nr2 = project( TABLE_W/2, netY, NET_HEIGHT);
-
-      // Cara frontal de la red
-      ctx.fillStyle = "rgba(148,163,184,0.12)";
-      ctx.beginPath();
-      ctx.moveTo(nl1.x, nl1.y); ctx.lineTo(nr1.x, nr1.y);
-      ctx.lineTo(nr2.x, nr2.y); ctx.lineTo(nl2.x, nl2.y);
-      ctx.closePath();
-      ctx.fill();
-
-      // Hilos de la red
-      const STRANDS = 7;
-      for (let i = 0; i <= STRANDS; i++) {
-        const t  = i / STRANDS;
-        const lx = nl1.x + (nr1.x - nl1.x) * t;
-        const ly = nl1.y + (nr1.y - nl1.y) * t;
-        const tx = nl2.x + (nr2.x - nl2.x) * t;
-        const ty = nl2.y + (nr2.y - nl2.y) * t;
-        ctx.strokeStyle = NET_COLOR;
-        ctx.lineWidth   = 0.7;
+      [
+        { x: W * 0.15, y: H * 0.25, r: 300, c: "rgba(37,99,235,0.06)" },
+        { x: W * 0.85, y: H * 0.65, r: 340, c: "rgba(109,40,217,0.05)" },
+        { x: W * 0.5,  y: H * 0.1,  r: 220, c: "rgba(59,130,246,0.04)" },
+      ].forEach(({ x, y, r, c }) => {
+        const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+        g.addColorStop(0, c);
+        g.addColorStop(1, "transparent");
+        ctx.fillStyle = g;
         ctx.beginPath();
-        ctx.moveTo(lx, ly); ctx.lineTo(tx, ty);
-        ctx.stroke();
-      }
-      // Horizontal top & bottom
-      ctx.lineWidth = 1.5;
-      ctx.strokeStyle = "rgba(148,163,184,0.8)";
-      ctx.beginPath();
-      ctx.moveTo(nl2.x, nl2.y); ctx.lineTo(nr2.x, nr2.y);
-      ctx.stroke();
-      ctx.strokeStyle = "rgba(148,163,184,0.3)";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(nl1.x, nl1.y); ctx.lineTo(nr1.x, nr1.y);
-      ctx.stroke();
-
-      // Postes de la red
-      ctx.strokeStyle = "rgba(200,220,255,0.7)";
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.moveTo(nl1.x, nl1.y - 3); ctx.lineTo(nl2.x, nl2.y - 2);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(nr1.x, nr1.y - 3); ctx.lineTo(nr2.x, nr2.y - 2);
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    // ── Paleta 3D ──────────────────────────────────────────────────────────
-    function drawPaddle(px, py, hitAnim, player) {
-      const PAD_W   = 0.16;
-      const PAD_D   = 0.05;  // profundidad visual
-      const HANDLE_L= 0.12;
-      const liftZ   = 0.02 + hitAnim * 0.06;
-
-      const c = project(px, py, liftZ);
-      const scale = c.scale * Math.min(W(), H()) * 0.0013;
-
-      const color   = player === 1 ? "#c0392b" : "#c0392b";
-      const edge    = player === 1 ? "#8b0000" : "#8b0000";
-      const rubber1 = player === 1 ? "#e74c3c" : "#1a1a2e";
-      const rubber2 = player === 1 ? "#1a1a2e" : "#e74c3c";
-
-      ctx.save();
-      ctx.translate(c.x, c.y);
-
-      // Sombra en mesa
-      ctx.fillStyle = "rgba(0,0,0,0.25)";
-      ctx.beginPath();
-      ctx.ellipse(0, scale * 8, scale * 80, scale * 12, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Cuerpo de la paleta (perspectiva inclinada)
-      const tiltX = hitAnim * 0.3;
-
-      // Cara posterior (hule negro o rojo)
-      ctx.fillStyle = rubber2;
-      ctx.beginPath();
-      ctx.ellipse(tiltX * scale * 5, -scale * 4, scale * 68, scale * 55, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Borde
-      ctx.strokeStyle = edge;
-      ctx.lineWidth = scale * 8;
-      ctx.stroke();
-
-      // Cara principal
-      ctx.fillStyle = rubber1;
-      ctx.shadowColor = hitAnim > 0.3 ? color : "transparent";
-      ctx.shadowBlur  = hitAnim > 0.3 ? 25 : 0;
-      ctx.beginPath();
-      ctx.ellipse(0, -scale * 6, scale * 64, scale * 50, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Reflejo
-      ctx.fillStyle = "rgba(255,255,255,0.15)";
-      ctx.beginPath();
-      ctx.ellipse(-scale * 15, -scale * 20, scale * 25, scale * 15, -0.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Mango
-      ctx.fillStyle = "#8B6914";
-      ctx.strokeStyle = "#5C4300";
-      ctx.lineWidth = scale * 2;
-      ctx.beginPath();
-      ctx.roundRect(
-        -scale * 8,
-        scale * 42,
-        scale * 16,
-        scale * 45,
-        scale * 4
-      );
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.restore();
-    }
-
-    // ── Pelota 3D ──────────────────────────────────────────────────────────
-    function drawBall(s) {
-      const p = project(s.bx, s.by, s.bz);
-      const r = BALL_R * W() * p.scale * 0.88 * s.ballScale;
-
-      ctx.save();
-
-      // Sombra en la mesa (proyectada abajo)
-      const shadow = project(s.bx, s.by, 0);
-      const shadowR = r * (1 - s.bz * 0.5);
-      ctx.fillStyle = `rgba(0,0,0,${0.35 * (1 - s.bz * 0.6)})`;
-      ctx.beginPath();
-      ctx.ellipse(shadow.x, shadow.y, shadowR, shadowR * 0.3, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Trail
-      s.trail.forEach((pt, i) => {
-        const tp = project(pt.x, pt.y, pt.z);
-        const tr = r * (i / s.trail.length) * 0.6;
-        ctx.fillStyle = `rgba(255,255,255,${(i / s.trail.length) * 0.18})`;
-        ctx.beginPath();
-        ctx.arc(tp.x, tp.y, tr, 0, Math.PI * 2);
+        ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
       });
 
-      // Gradiente esférico
-      const gx = p.x - r * 0.35;
-      const gy = p.y - r * 0.35;
-      const grad = ctx.createRadialGradient(gx, gy, r * 0.05, p.x, p.y, r);
-      grad.addColorStop(0,   "#ffffff");
-      grad.addColorStop(0.2, "#f0f4ff");
-      grad.addColorStop(0.7, "#d6e4ff");
-      grad.addColorStop(1,   "#93c5fd");
-
-      ctx.shadowColor = "rgba(147,197,253,0.6)";
-      ctx.shadowBlur  = r * 1.5;
-      ctx.fillStyle   = grad;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Brillo especular
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = "rgba(255,255,255,0.85)";
-      ctx.beginPath();
-      ctx.ellipse(p.x - r * 0.28, p.y - r * 0.28, r * 0.22, r * 0.15, -0.5, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.restore();
-    }
-
-    // ── Fondo ambiental ────────────────────────────────────────────────────
-    function drawBackground() {
-      ctx.clearRect(0, 0, W(), H());
-
-      // Suelo del salón
-      const floorGrad = ctx.createLinearGradient(0, H() * 0.5, 0, H());
-      floorGrad.addColorStop(0, "#080d18");
-      floorGrad.addColorStop(1, "#040810");
-      ctx.fillStyle = floorGrad;
-      ctx.fillRect(0, H() * 0.5, W(), H());
-
-      // Techo/fondo
-      const bgGrad = ctx.createLinearGradient(0, 0, 0, H() * 0.5);
-      bgGrad.addColorStop(0, "#050b1a");
-      bgGrad.addColorStop(1, "#080d18");
-      ctx.fillStyle = bgGrad;
-      ctx.fillRect(0, 0, W(), H() * 0.5);
-
-      // Luz cenital (spot)
-      const spotlight = ctx.createRadialGradient(W() * 0.5, H() * 0.1, 0, W() * 0.5, H() * 0.5, W() * 0.6);
-      spotlight.addColorStop(0, "rgba(59,130,246,0.07)");
-      spotlight.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = spotlight;
-      ctx.fillRect(0, 0, W(), H());
-    }
-
-    // ── Patas de la mesa ───────────────────────────────────────────────────
-    function drawTableLegs() {
-      const legs = [
-        { wx: -TABLE_W/2 + 0.06, wy: 0.04 },
-        { wx:  TABLE_W/2 - 0.06, wy: 0.04 },
-        { wx: -TABLE_W/2 + 0.06, wy: TABLE_L - 0.04 },
-        { wx:  TABLE_W/2 - 0.06, wy: TABLE_L - 0.04 },
-      ];
-      legs.forEach(({ wx, wy }) => {
-        const top = project(wx, wy, 0);
-        const bot = project(wx, wy + 0.02, -0.3);
-        ctx.strokeStyle = "#1e3a5f";
-        ctx.lineWidth = 4 * top.scale;
+      stars.forEach((s) => {
+        const pulse = Math.sin(frame * s.speed + s.phase) * 0.35 + 0.65;
         ctx.beginPath();
-        ctx.moveTo(top.x, top.y);
-        ctx.lineTo(bot.x, bot.y);
-        ctx.stroke();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${s.alpha * pulse})`;
+        ctx.fill();
       });
+
+      shootTimer++;
+      if (shootTimer >= 180 + Math.random() * 60) {
+        spawnShoot();
+        shootTimer = 0;
+      }
+
+      for (let i = shoots.length - 1; i >= 0; i--) {
+        const s = shoots[i];
+        s.life++;
+        s.x += Math.cos(s.angle) * s.speed;
+        s.y += Math.sin(s.angle) * s.speed;
+        s.alpha = 1 - s.life / s.maxLife;
+        if (s.alpha <= 0) { shoots.splice(i, 1); continue; }
+        const tx = s.x - Math.cos(s.angle) * s.len;
+        const ty = s.y - Math.sin(s.angle) * s.len;
+        const grad = ctx.createLinearGradient(tx, ty, s.x, s.y);
+        grad.addColorStop(0, "transparent");
+        grad.addColorStop(0.6, `rgba(148,196,255,${s.alpha * 0.4})`);
+        grad.addColorStop(1, `rgba(255,255,255,${s.alpha})`);
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(s.x, s.y);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200,230,255,${s.alpha})`;
+        ctx.fill();
+      }
+
+      animId = requestAnimationFrame(draw);
     }
 
-    // ── Loop principal ─────────────────────────────────────────────────────
-    function tick() {
-      const s = stateRef.current;
-
-      drawBackground();
-      drawTableLegs();
-      drawTable();
-
-      // IA de las paletas
-      const p1TargetY = 0.08;
-      const p2TargetY = TABLE_L - 0.08;
-      s.p1x += (s.bx - s.p1x) * 0.055;
-      s.p2x += (s.bx - s.p2x) * 0.055;
-
-      // Mover pelota
-      s.trail.push({ x: s.bx, y: s.by, z: s.bz });
-      if (s.trail.length > 8) s.trail.shift();
-
-      s.bx += s.vx;
-      s.by += s.vy;
-      s.bz += s.vz;
-      s.vz -= s.gravity; // gravedad
-
-      // Rebote en bordes laterales
-      if (s.bx < -TABLE_W/2 + BALL_R) { s.bx = -TABLE_W/2 + BALL_R; s.vx = Math.abs(s.vx); }
-      if (s.bx >  TABLE_W/2 - BALL_R) { s.bx =  TABLE_W/2 - BALL_R; s.vx = -Math.abs(s.vx); }
-
-      // Rebote en la mesa (z=0)
-      if (s.bz < BALL_R && s.vz < 0) {
-        s.bz  = BALL_R;
-        s.vz  = Math.abs(s.vz) * 0.62; // pérdida de energía al botar
-        if (Math.abs(s.vz) < 0.003) s.vz = 0.003;
-      }
-
-      // Colisión paleta cercana (jugador 1, by cerca de 0)
-      if (s.by < p1TargetY + 0.07 && s.by > 0 && s.vy < 0 && s.side === "p1") {
-        s.by    = p1TargetY + 0.07;
-        s.vy    = Math.abs(s.vy) * (1.0 + Math.random() * 0.08);
-        s.vz    = 0.008 + Math.random() * 0.005; // lanzar arriba
-        s.vx   += (Math.random() - 0.5) * 0.004;
-        s.p1Hit = 1;
-        s.side  = "p2";
-        s.ballScale = 1.4;
-        onHit("p1");
-      }
-
-      // Colisión paleta lejana (jugador 2, by cerca de TABLE_L)
-      if (s.by > TABLE_L - p1TargetY - 0.07 && s.by < TABLE_L && s.vy > 0 && s.side === "p2") {
-        s.by    = TABLE_L - p1TargetY - 0.07;
-        s.vy    = -Math.abs(s.vy) * (1.0 + Math.random() * 0.08);
-        s.vz    = 0.008 + Math.random() * 0.005;
-        s.vx   += (Math.random() - 0.5) * 0.004;
-        s.p2Hit = 1;
-        s.side  = "p1";
-        s.ballScale = 1.4;
-        onHit("p2");
-      }
-
-      // Garantizar velocidad mínima en y
-      if (Math.abs(s.vy) < 0.006) s.vy = s.vy > 0 ? 0.007 : -0.007;
-      // Limitar velocidad en x
-      s.vx = Math.max(-0.014, Math.min(0.014, s.vx));
-
-      // Decay
-      s.p1Hit     = Math.max(0, s.p1Hit     - 0.06);
-      s.p2Hit     = Math.max(0, s.p2Hit     - 0.06);
-      s.ballScale = Math.max(1, s.ballScale - 0.035);
-
-      // Dibujar paletas (orden: la más lejos primero)
-      drawPaddle(s.p2x, TABLE_L - 0.08, s.p2Hit, 2);
-      drawBall(s);
-      drawPaddle(s.p1x, p1TargetY, s.p1Hit, 1);
-
-      rafRef.current = requestAnimationFrame(tick);
-    }
-
-    rafRef.current = requestAnimationFrame(tick);
-
-    window.addEventListener("resize", resize);
+    draw();
     return () => {
-      cancelAnimationFrame(rafRef.current);
-      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", onResize);
     };
-  }, [onHit]);
+  }, [density]);
 
   return (
-    <canvas ref={canvasRef} className="w-full h-full" style={{ display: "block" }} />
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full pointer-events-none"
+      style={{ zIndex: 0 }}
+    />
   );
 }
 
-// ─── SECCIÓN PRINCIPAL ────────────────────────────────────────────────────────
-function Skills() {
-  const [revealed,  setRevealed]  = useState([]);
-  const [floating,  setFloating]  = useState([]);
-  const skillIndex  = useRef(0);
-  const floatId     = useRef(0);
+// ── Radar Chart ──────────────────────────────────────────────────────────────
+function RadarChart({ data }) {
+  const canvasRef = useRef(null);
 
-  const handleHit = useCallback((player) => {
-    if (skillIndex.current >= ALL_SKILLS.length) return;
-    const skill = ALL_SKILLS[skillIndex.current++];
-    setRevealed(prev => [...prev, skill]);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const cx = 160, cy = 145, R = 105;
+    const N = data.length;
+    let progress = 0;
 
-    const id = floatId.current++;
-    setFloating(prev => [...prev, { id, skill, player }]);
-    setTimeout(() => setFloating(prev => prev.filter(f => f.id !== id)), 1400);
-  }, []);
+    function angle(i) { return (Math.PI * 2 * i) / N - Math.PI / 2; }
 
-  const allDone = revealed.length >= ALL_SKILLS.length;
+    function draw(t) {
+      ctx.clearRect(0, 0, 320, 290);
+
+      for (let ring = 1; ring <= 5; ring++) {
+        const r = (R * ring) / 5;
+        ctx.beginPath();
+        for (let i = 0; i < N; i++) {
+          const a = angle(i);
+          i === 0
+            ? ctx.moveTo(cx + r * Math.cos(a), cy + r * Math.sin(a))
+            : ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a));
+        }
+        ctx.closePath();
+        ctx.strokeStyle = "rgba(148,163,184,0.12)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      for (let i = 0; i < N; i++) {
+        const a = angle(i);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + R * Math.cos(a), cy + R * Math.sin(a));
+        ctx.strokeStyle = "rgba(148,163,184,0.1)";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      for (let i = 0; i < N; i++) {
+        const a = angle(i);
+        const r = R * data[i].value * t;
+        i === 0
+          ? ctx.moveTo(cx + r * Math.cos(a), cy + r * Math.sin(a))
+          : ctx.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a));
+      }
+      ctx.closePath();
+      ctx.fillStyle = "rgba(99,102,241,0.15)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(99,102,241,0.8)";
+      ctx.lineWidth = 1.8;
+      ctx.stroke();
+
+      for (let i = 0; i < N; i++) {
+        const a = angle(i);
+        const r = R * data[i].value * t;
+        ctx.beginPath();
+        ctx.arc(cx + r * Math.cos(a), cy + r * Math.sin(a), 4, 0, Math.PI * 2);
+        ctx.fillStyle = "#818cf8";
+        ctx.fill();
+      }
+
+      ctx.font = "11px monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(148,163,184,0.8)";
+      for (let i = 0; i < N; i++) {
+        const a = angle(i);
+        const lr = R + 24;
+        ctx.fillText(data[i].label, cx + lr * Math.cos(a), cy + lr * Math.sin(a));
+      }
+    }
+
+    let animId;
+    function animate() {
+      progress = Math.min(progress + 0.03, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      draw(eased);
+      if (progress < 1) animId = requestAnimationFrame(animate);
+    }
+
+    const timeout = setTimeout(animate, 400);
+    return () => { clearTimeout(timeout); cancelAnimationFrame(animId); };
+  }, [data]);
+
+  return <canvas ref={canvasRef} width={320} height={290} />;
+}
+
+// ── Tech Icon ─────────────────────────────────────────────────────────────────
+function TechIcon({ img, icon, name }) {
+  const [failed, setFailed] = useState(false);
+
+  if (img && !failed) {
+    return (
+      <img
+        src={img}
+        alt={name}
+        onError={() => setFailed(true)}
+        className="w-6 h-6 object-contain"
+      />
+    );
+  }
+  return <span className="text-base leading-none">{icon}</span>;
+}
+
+// ── Animated Bar ──────────────────────────────────────────────────────────────
+function AnimBar({ pct, color }) {
+  const [width, setWidth] = useState(0);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setWidth(pct); obs.disconnect(); }
+    }, { threshold: 0.3 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, [pct]);
 
   return (
-    <section
-      id="habilidades"
-      className="relative w-full bg-[#04080f] text-white overflow-hidden"
+    <div ref={ref} className="h-1 w-full rounded-full bg-white/10 overflow-hidden">
+      <div
+        className="h-full rounded-full transition-all duration-1000 ease-out"
+        style={{ width: `${width}%`, background: color }}
+      />
+    </div>
+  );
+}
+
+// ── Data ──────────────────────────────────────────────────────────────────────
+// img: URL de CDN  →  "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/..."
+// img: local       →  importa arriba (ej: import pyIcon from "../assets/python.png") y pon img: pyIcon
+// img: null        →  muestra el emoji icon como fallback
+const TECH_SKILLS = [
+  {
+    name: "JavaScript",
+    pct: 90,
+    icon: "⚡",
+    img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+    color: "linear-gradient(90deg,#b45309,#fbbf24)",
+    bg: "rgba(251,191,36,0.1)",
+  },
+  {
+    name: "React",
+    pct: 85,
+    icon: "⚛",
+    img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
+    color: "linear-gradient(90deg,#0e7490,#22d3ee)",
+    bg: "rgba(34,211,238,0.1)",
+  },
+  {
+    name: "Node.js",
+    pct: 80,
+    icon: "◈",
+    img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg",
+    color: "linear-gradient(90deg,#166534,#4ade80)",
+    bg: "rgba(74,222,128,0.1)",
+  },
+  {
+    name: "TypeScript",
+    pct: 80,
+    icon: "Ts",
+    img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+    color: "linear-gradient(90deg,#1e40af,#60a5fa)",
+    bg: "rgba(96,165,250,0.1)",
+  },
+  {
+    name: "Python",
+    pct: 75,
+    icon: "𝜋",
+    // Para imagen local: import pyIcon from "../assets/python.png"  →  img: pyIcon
+    img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+    color: "linear-gradient(90deg,#1d4ed8,#818cf8)",
+    bg: "rgba(129,140,248,0.1)",
+  },
+  {
+    name: "SQL / NoSQL",
+    pct: 72,
+    icon: "⬡",
+    img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg",
+    color: "linear-gradient(90deg,#6d28d9,#c084fc)",
+    bg: "rgba(192,132,252,0.1)",
+  },
+  {
+    name: "C#",
+    pct: 65,
+    icon: "C#",
+    img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg",
+    color: "linear-gradient(90deg,#075985,#38bdf8)",
+    bg: "rgba(56,189,248,0.1)",
+  },
+  {
+    name: "Git / CI·CD",
+    pct: 88,
+    icon: "⑂",
+    img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
+    color: "linear-gradient(90deg,#991b1b,#f87171)",
+    bg: "rgba(248,113,113,0.1)",
+  },
+];
+
+const SOFT_SKILLS = [
+  { icon: "🧭", title: "Liderazgo técnico",       desc: "Guío equipos hacia decisiones claras y arquitecturas sostenibles a largo plazo." },
+  { icon: "💬", title: "Comunicación efectiva",   desc: "Traduzco conceptos técnicos a lenguaje que cualquier stakeholder comprende." },
+  { icon: "🔍", title: "Resolución de problemas", desc: "Descompongo retos complejos en soluciones iterativas y medibles." },
+  { icon: "🤝", title: "Trabajo en equipo",        desc: "Colaboro activamente, comparto conocimiento y elevo a mis compañeros." },
+  { icon: "🔄", title: "Adaptabilidad",            desc: "Aprendo nuevas tecnologías con rapidez y me ajusto a cambios de contexto." },
+  { icon: "⏱",  title: "Gestión del tiempo",       desc: "Priorizo con criterio y entrego con consistencia, incluso bajo presión." },
+];
+
+const RADAR_DATA = [
+  { label: "Frontend",   value: 0.88 },
+  { label: "Backend",    value: 0.80 },
+  { label: "DevOps",     value: 0.65 },
+  { label: "Liderazgo",  value: 0.82 },
+  { label: "Comunic.",   value: 0.78 },
+  { label: "Resolución", value: 0.90 },
+];
+
+// ── Main Component ─────────────────────────────────────────────────────────────
+export default function SkillsPortfolio() {
+  const [activeTab, setActiveTab]       = useState("tech");
+  const [hoveredSkill, setHoveredSkill] = useState(null);
+
+  return (
+    <div
+      className="relative min-h-screen bg-[#050b18] text-slate-200 overflow-x-hidden"
+      style={{ fontFamily: "'Syne', sans-serif" }}
     >
-      {/* Ambient glows */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-[#1d4ed8]/6 rounded-full blur-[160px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-900/8 rounded-full blur-[120px]" />
-      </div>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
+        .font-mono-custom { font-family: 'Space Mono', monospace; }
+      `}</style>
 
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#3b82f6]/30 to-transparent z-[2]" />
+      <StarBackground />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-16 py-28">
+      <div className="relative z-10 max-w-3xl mx-auto px-5 py-16">
 
-        {/* Label */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.5 }}
-          className="flex items-center gap-3 mb-6"
-        >
-          <span className="text-[#3b82f6] text-xs tracking-[0.3em] uppercase"
-            style={{ fontFamily: "'Space Mono', monospace" }}>05 /</span>
-          <span className="w-12 h-px bg-[#3b82f6]/40" />
-          <span className="text-gray-500 text-xs tracking-[0.2em] uppercase"
-            style={{ fontFamily: "'Space Mono', monospace" }}>habilidades</span>
-        </motion.div>
-
-        {/* Heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-12"
-        >
-          <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-3"
-            style={{ fontFamily: "'Space Mono', monospace" }}>
-            Mis{" "}
-            <span className="relative inline-block">
-              <span className="text-[#3b82f6]">habilidades</span>
-              <span className="absolute -bottom-1 left-0 right-0 h-px bg-[#3b82f6]/40" />
-            </span>
-          </h2>
-          <p className="text-gray-500 text-sm"
-            style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}>
-            Cada golpe revela una nueva habilidad. ¡Observa el juego!
+        {/* ── Hero ── */}
+        <div className="text-center mb-16">
+          <span className="font-mono-custom inline-block text-[10px] tracking-[0.22em] uppercase text-blue-400 border border-blue-500/30 rounded-full px-4 py-1 mb-4">
+            Portfolio · 2025
+          </span>
+          <h1
+            className="text-5xl font-extrabold leading-[1.05] mb-4"
+            style={{
+              background: "linear-gradient(135deg, #fff 30%, #7aadff 65%, #b69fff 100%)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            Desarrollador<br />Full-Stack
+          </h1>
+          <p className="text-slate-400 text-base max-w-sm mx-auto leading-relaxed">
+            Construyendo productos digitales con código limpio,<br />
+            liderazgo efectivo y pasión por resolver problemas reales.
           </p>
-        </motion.div>
 
-        {/* Layout principal */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-
-          {/* ── PING PONG 3D ── */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7 }}
-            className="relative"
-          >
-            <div
-              className="relative rounded-2xl border border-white/8 overflow-hidden"
-              style={{ height: "440px", background: "#04080f" }}
-            >
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#3b82f6]/50 to-transparent z-10" />
-
-              <PingPongGame3D onHit={handleHit} />
-
-              {/* Player labels */}
-              <div className="absolute top-3 left-4 flex items-center gap-2 z-10">
-                <div className="w-2.5 h-2.5 rounded-full bg-[#e74c3c]" />
-                <span className="text-[10px] text-[#e74c3c]"
-                  style={{ fontFamily: "'Space Mono', monospace" }}>Jugador 1</span>
+          <div className="flex justify-center gap-10 mt-8">
+            {[["1+", "años exp."], ["10+", "proyectos"], ["5+", "tecnologías"]].map(([n, l]) => (
+              <div key={l} className="text-center">
+                <div className="font-mono-custom text-2xl font-bold text-blue-300">{n}</div>
+                <div className="text-xs text-slate-500 mt-0.5">{l}</div>
               </div>
-              <div className="absolute top-3 right-4 flex items-center gap-2 z-10">
-                <span className="text-[10px] text-[#a855f7]"
-                  style={{ fontFamily: "'Space Mono', monospace" }}>Jugador 2</span>
-                <div className="w-2.5 h-2.5 rounded-full bg-[#a855f7]" />
-              </div>
-
-              {/* Contador */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10
-                flex items-center gap-2 px-3 py-1 rounded-full border border-white/8 bg-black/70 backdrop-blur-sm">
-                <span className="text-[10px] text-gray-400"
-                  style={{ fontFamily: "'Space Mono', monospace" }}>
-                  {revealed.length}/{ALL_SKILLS.length} habilidades
-                </span>
-                {allDone && (
-                  <span className="text-[10px] text-emerald-400"
-                    style={{ fontFamily: "'Space Mono', monospace" }}>
-                    ✓ completo
-                  </span>
-                )}
-              </div>
-
-              {/* Chips flotantes */}
-              <AnimatePresence>
-                {floating.map(({ id, skill, player }) => (
-                  <motion.div
-                    key={id}
-                    initial={{ opacity: 0, scale: 0.5, y: player === "p1" ? 30 : -30 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.7, y: player === "p1" ? -40 : 40 }}
-                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute left-1/2 -translate-x-1/2 z-20 pointer-events-none
-                      flex items-center gap-2 px-4 py-2 rounded-full border backdrop-blur-sm"
-                    style={{
-                      top: player === "p1" ? "auto" : "18%",
-                      bottom: player === "p1" ? "18%" : "auto",
-                      borderColor: `${skill.color}55`,
-                      background: `${skill.color}22`,
-                      boxShadow: `0 0 28px ${skill.color}35`,
-                    }}
-                  >
-                    {skill.logo ? (
-                      <img src={skill.logo} alt={skill.label}
-                        style={{ width: 20, height: 20, objectFit: "contain" }} />
-                    ) : (
-                      <span style={{ fontSize: 16 }}>{skill.icon}</span>
-                    )}
-                    <span className="text-sm font-bold"
-                      style={{ color: skill.color, fontFamily: "'Space Mono', monospace" }}>
-                      {skill.label}
-                    </span>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-
-            {/* Leyenda */}
-            <div className="flex items-center gap-4 mt-3 px-1">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#3b82f6]" />
-                <span className="text-[10px] text-gray-600"
-                  style={{ fontFamily: "'Space Mono', monospace" }}>Técnica</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#ec4899]" />
-                <span className="text-[10px] text-gray-600"
-                  style={{ fontFamily: "'Space Mono', monospace" }}>Soft skill</span>
-              </div>
-              <span className="text-[10px] text-gray-700 ml-auto"
-                style={{ fontFamily: "'Space Mono', monospace" }}>
-                animación automática
-              </span>
-            </div>
-          </motion.div>
-
-          {/* ── PANEL DE HABILIDADES ── */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.1 }}
-          >
-            <div className="rounded-2xl border border-white/8 bg-black/40 backdrop-blur-sm p-5 min-h-[440px]">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-[10px] text-gray-500 tracking-[0.25em] uppercase"
-                  style={{ fontFamily: "'Space Mono', monospace" }}>
-                  Habilidades desbloqueadas
-                </p>
-                {revealed.length > 0 && (
-                  <motion.span
-                    key={revealed.length}
-                    initial={{ scale: 1.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-                    className="text-xs text-[#3b82f6]"
-                    style={{ fontFamily: "'Space Mono', monospace" }}
-                  >
-                    +{revealed.length}
-                  </motion.span>
-                )}
-              </div>
-
-              {revealed.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-64 gap-3">
-                  <motion.div
-                    animate={{ opacity: [0.3, 0.7, 0.3] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-12 h-12 rounded-full border border-[#3b82f6]/30 flex items-center justify-center"
-                  >
-                    <span className="text-[#3b82f6] text-xl">🏓</span>
-                  </motion.div>
-                  <p className="text-gray-700 text-xs text-center"
-                    style={{ fontFamily: "'Space Mono', monospace" }}>
-                    Esperando el primer golpe...
-                  </p>
-                </div>
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  <AnimatePresence>
-                    {revealed.map((skill) => (
-                      <SkillChip key={skill.label} skill={skill} />
-                    ))}
-                  </AnimatePresence>
-                </div>
-              )}
-
-              {revealed.length > 0 && (
-                <div className="mt-6 pt-4 border-t border-white/6">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-[9px] text-gray-600 uppercase tracking-wider"
-                      style={{ fontFamily: "'Space Mono', monospace" }}>Progreso</span>
-                    <span className="text-[9px] text-[#3b82f6]"
-                      style={{ fontFamily: "'Space Mono', monospace" }}>
-                      {Math.round((revealed.length / ALL_SKILLS.length) * 100)}%
-                    </span>
-                  </div>
-                  <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full rounded-full bg-gradient-to-r from-[#3b82f6] to-[#a855f7]"
-                      animate={{ width: `${(revealed.length / ALL_SKILLS.length) * 100}%` }}
-                      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    />
-                  </div>
-                  {allDone && (
-                    <motion.p
-                      initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                      className="text-[11px] text-emerald-400 mt-3 text-center"
-                      style={{ fontFamily: "'Space Mono', monospace" }}
-                    >
-                      ✓ ¡Todas las habilidades reveladas!
-                    </motion.p>
-                  )}
-                </div>
-              )}
-            </div>
-          </motion.div>
-
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent z-[2]" />
-    </section>
+        {/* ── Tabs ── */}
+        <div className="flex justify-center mb-10">
+          <div className="flex bg-white/5 border border-white/[0.08] rounded-full p-1 gap-1">
+            {[["tech", "Técnicas"], ["soft", "Blandas"], ["radar", "Visión general"]].map(([id, label]) => (
+              <button
+                key={id}
+                onClick={() => setActiveTab(id)}
+                className={`font-mono-custom text-xs tracking-wide px-5 py-2 rounded-full transition-all duration-300 ${
+                  activeTab === id
+                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-900/50"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Tech tab ── */}
+        {activeTab === "tech" && (
+          <div>
+            <p className="font-mono-custom text-[10px] tracking-[0.2em] uppercase text-slate-600 mb-5 flex items-center gap-3">
+              Habilidades técnicas
+              <span className="flex-1 h-px bg-gradient-to-r from-indigo-500/20 to-transparent" />
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {TECH_SKILLS.map((s) => (
+                <div
+                  key={s.name}
+                  onMouseEnter={() => setHoveredSkill(s.name)}
+                  onMouseLeave={() => setHoveredSkill(null)}
+                  className={`relative bg-white/[0.03] border rounded-2xl p-4 cursor-default transition-all duration-300 ${
+                    hoveredSkill === s.name
+                      ? "border-indigo-500/40 bg-white/[0.06] -translate-y-0.5"
+                      : "border-white/[0.06]"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 border border-white/[0.08]"
+                      style={{ background: s.bg || "rgba(255,255,255,0.05)" }}
+                    >
+                      <TechIcon img={s.img} icon={s.icon} name={s.name} />
+                    </div>
+                    <span className="font-semibold text-slate-200 text-sm">{s.name}</span>
+                    <span className="ml-auto font-mono-custom text-xs text-slate-500">{s.pct}%</span>
+                  </div>
+                  <AnimBar pct={s.pct} color={s.color} />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Soft tab ── */}
+        {activeTab === "soft" && (
+          <div>
+            <p className="font-mono-custom text-[10px] tracking-[0.2em] uppercase text-slate-600 mb-5 flex items-center gap-3">
+              Habilidades blandas
+              <span className="flex-1 h-px bg-gradient-to-r from-violet-500/20 to-transparent" />
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {SOFT_SKILLS.map((s) => (
+                <div
+                  key={s.title}
+                  className="flex gap-4 bg-white/[0.025] border border-white/[0.06] hover:border-violet-500/30 rounded-2xl p-4 transition-all duration-300 hover:-translate-y-0.5"
+                >
+                  <div className="w-10 h-10 rounded-full bg-violet-500/10 flex items-center justify-center text-lg flex-shrink-0">
+                    {s.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-200 mb-1">{s.title}</h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">{s.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ── Radar tab ── */}
+        {activeTab === "radar" && (
+          <div>
+            <p className="font-mono-custom text-[10px] tracking-[0.2em] uppercase text-slate-600 mb-5 flex items-center gap-3">
+              Visión general
+              <span className="flex-1 h-px bg-gradient-to-r from-indigo-500/20 to-transparent" />
+            </p>
+            <div className="flex flex-col items-center gap-6">
+              <div className="bg-white/[0.03] border border-white/[0.06] rounded-3xl p-6">
+                <RadarChart data={RADAR_DATA} />
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full">
+                {RADAR_DATA.map((d) => (
+                  <div key={d.label} className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-3 text-center">
+                    <div className="font-mono-custom text-lg font-bold text-indigo-300">
+                      {Math.round(d.value * 100)}%
+                    </div>
+                    <div className="text-xs text-slate-500 mt-0.5">{d.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── CTA ── */}
+        <div className="flex flex-wrap justify-center gap-3 mt-12">
+          <button className="font-mono-custom text-xs tracking-wide bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-full transition-all duration-200 hover:scale-105 active:scale-95">
+            Descargar CV
+          </button>
+          <button className="font-mono-custom text-xs tracking-wide border border-white/15 hover:border-white/30 text-slate-400 hover:text-slate-200 px-6 py-2.5 rounded-full transition-all duration-200">
+            Ver proyectos
+          </button>
+          <button className="font-mono-custom text-xs tracking-wide border border-white/15 hover:border-white/30 text-slate-400 hover:text-slate-200 px-6 py-2.5 rounded-full transition-all duration-200">
+            Contactar
+          </button>
+        </div>
+
+      </div>
+    </div>
   );
 }
-
-export default Skills;

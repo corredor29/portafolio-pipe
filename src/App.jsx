@@ -3,7 +3,7 @@ import Hero from "./sections/Hero";
 import AboutMe from "./sections/AboutMe";
 import Projects from "./sections/Projects";
 import Recommendations from "./sections/Recommendations";
-import Skills from "./sections/skills";
+import SkillsPortfolio from "./sections/skills";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
         <Recommendations />
       </div>
       <div id="habilidades">
-        <Skills />
+        <SkillsPortfolio />
       </div>
 
     </div>
