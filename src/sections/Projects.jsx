@@ -2,6 +2,11 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import StarBackground from "../components/StarBackground";
 import n8n from "../assets/n8n.png";
+import hotel from "../assets/RinconCarmen.png";
+import fastapi from "../assets/pythonfastapi.webp";
+import luxtime from "../assets/luxtime.png";
+import betplay from "../assets/bet.jpg";
+import coleccion from "../assets/coleccion.jpg";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -14,7 +19,7 @@ const projects = [
     title: "Hotel El Rincón del Carmen",
     description:
       "Sitio web funcional que permite a los clientes explorar el hotel, consultar disponibilidad y gestionar reservas, con un panel administrativo para controlar habitaciones y reservas.",
-    image: null, 
+    image: hotel, 
     tags: ["HTML", "Css", "JavaScript" ],
     category: "Fullstack",
     github: "https://github.com/corredor29/Proyecto-de-js",
@@ -26,7 +31,7 @@ const projects = [
     title: "Task Manager API",
     description:
       "API RESTful para gestión de tareas con autenticación JWT, roles de usuario y Registramiento de habitaciones.",
-    image: null,
+    image: fastapi,
     tags: ["Python", "FastAPI", "MySQL"],
     category: "Backend",
     github: "https://github.com/corredor29/fasapi-python-",
@@ -38,7 +43,7 @@ const projects = [
     title: "LuxTime - Sitio Web Corporativo",
     description:
       "El objetivo es representar visualmente todas las páginas y funcionalidades principales de la marca, sin incluir lógica funcional ni backend.",
-    image: null,
+    image: luxtime,
     tags: ["HTML", "CSS"],
     category: "Frontend",
     github: "https://github.com/wen-27/proyecto-html",
@@ -47,10 +52,10 @@ const projects = [
   },
   {
     id: 4,
-    title: "Liga Betpklay - C#",
+    title: "Liga Betplay - C#",
     description:
       "Simulación de la Liga BetPlay en consola usando POO, estructuras en memoria y LINQ. Permite registrar equipos, simular partidos, actualizar estadísticas y consultar métricas del torneo.",
-    image: null,
+    image: betplay,
     tags: ["C#", "POO", "LINQ"],
     category: "Backend",
     github: "https://github.com/corredor29/Liga_Betplay_cshap",
@@ -62,7 +67,7 @@ const projects = [
     title: "Administrador de Colección",
     description:
       "Aplicación de consola en Python para gestionar colecciones personales de libros, películas o música, permitiendo organizar títulos, registrar detalles y valorar cada elemento de manera sencilla y estructurada.",
-    image: null,
+    image: coleccion,
     tags: ["Python", "POO"],
     category: "Backend",
     github: "https://github.com/wen-27/proyecto-python",

@@ -11,10 +11,12 @@ function Navbar() {
   }, []);
 
   const links = [
-    { label: "Inicio",    href: "#inicio" },
-    { label: "Sobre mí",  href: "#sobre-mi" },
-    { label: "Proyectos", href: "#proyectos" },
-    { label: "Contacto",  href: "#contacto" },
+    { label: "Inicio",           href: "#inicio" },
+    { label: "Sobre mí",         href: "#sobre-mi" },
+    { label: "Proyectos",        href: "#proyectos" },
+    { label: "Habilidades",      href: "#habilidades" },
+    { label: "Recomendaciones",  href: "#recomendaciones" },
+    { label: "Contacto",         href: "#contacto" },
   ];
 
   const handleClick = (label, href) => {
@@ -48,12 +50,12 @@ function Navbar() {
         </button>
 
         {/* Links */}
-        <ul className="flex items-center gap-1">
+        <ul className="hidden md:flex items-center gap-0.5">
           {links.map(({ label, href }) => (
             <li key={label}>
               <button
                 onClick={() => handleClick(label, href)}
-                className={`relative px-4 py-2 text-sm font-medium tracking-wide transition-all duration-300 rounded-lg cursor-pointer
+                className={`relative px-3 py-2 text-xs font-medium tracking-wide transition-all duration-300 rounded-lg cursor-pointer
                   ${active === label ? "text-white" : "text-gray-400 hover:text-white"}`}
                 style={{ fontFamily: "'Space Mono', monospace" }}
               >
