@@ -10,13 +10,13 @@ const fadeUp = {
 };
 
 const skills = [
-  { name: "Python",       level: 90 },
-  { name: "Git",          level: 100 },
-  { name: "JavaScript",   level: 80 },
-  { name: "React",        level: 82 },
+  { name: "Python", level: 90 },
+  { name: "Git", level: 100 },
+  { name: "JavaScript", level: 80 },
+  { name: "React", level: 82 },
   { name: "Tailwind CSS", level: 82 },
-  { name: "C#",           level: 72 },
-  { name: "MySQL",        level: 78 },
+  { name: "C#", level: 72 },
+  { name: "MySQL", level: 78 },
 ];
 
 function AboutMe() {
@@ -25,7 +25,6 @@ function AboutMe() {
 
   return (
     <section id="sobre-mi" className="relative w-full min-h-screen bg-black text-white overflow-hidden">
-
       <StarBackground density={140} shootingStars={true} />
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60 pointer-events-none z-[1]" />
@@ -34,7 +33,6 @@ function AboutMe() {
       <div className="absolute bottom-0 left-1/4 w-[400px] h-[300px] bg-purple-900/8 rounded-full blur-[100px] pointer-events-none z-[1]" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-16 py-28">
-
         <motion.div
           initial={{ opacity: 0, x: -20 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -48,7 +46,6 @@ function AboutMe() {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-
           {/* Left column */}
           <motion.div
             initial="hidden"
@@ -120,7 +117,7 @@ function AboutMe() {
                   {tx.hobbies.map(({ emoji, label, sub }) => (
                     <div key={label}
                       className="group flex items-center gap-3 px-3.5 py-3 rounded-xl border border-white/6 bg-white/[0.02]
-                        hover:border-[#3b82f6]/35 hover:bg-[#3b82f6]/6 hover:-translate-y-px transition-all duration-250 cursor-default">
+                      hover:border-[#3b82f6]/35 hover:bg-[#3b82f6]/6 hover:-translate-y-px transition-all duration-250 cursor-default">
                       <div className="w-9 h-9 rounded-[9px] flex items-center justify-center text-[17px] flex-shrink-0 bg-white/[0.04] border border-white/6">
                         {emoji}
                       </div>
@@ -155,8 +152,14 @@ function AboutMe() {
                 {tx.headline3} <br />
                 <span className="text-gray-400">{tx.headline4}</span>
               </h2>
+
+              {/* Bio renderizada desde bioParts — sin JSX en translations.js */}
               <p className="text-gray-400 text-lg leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}>
-                {tx.bio}
+                {tx.bioParts.map((part, i) =>
+                  part.highlight
+                    ? <span key={i} className="text-white font-medium">{part.text}</span>
+                    : part.text
+                )}
               </p>
             </motion.div>
 

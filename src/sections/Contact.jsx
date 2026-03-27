@@ -1,6 +1,11 @@
 import { useState } from "react";
+import { useLang } from "../context/LanguageContext";
+import { t } from "../context/translations.js";
 
 const Contact = () => {
+  const { lang } = useLang();
+  const tx = t[lang].contact;
+
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [sent, setSent] = useState(false);
 
@@ -10,7 +15,6 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Conectar con EmailJS o Formspree aquí
     console.log("Formulario enviado:", formData);
     setSent(true);
     setFormData({ name: "", email: "", subject: "", message: "" });
@@ -52,8 +56,8 @@ const Contact = () => {
   const contactCards = [
     {
       id: "email",
-      label: "Email directo",
-      value: "corredorsilvafelipe8@gmail.com", 
+      label: tx.emailLabel,
+      value: "corredorsilvafelipe8@gmail.com",
       href: "mailto:corredorsilvafelipe8@gmail.com",
       icon: (
         <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -63,8 +67,8 @@ const Contact = () => {
     },
     {
       id: "linkedin",
-      label: "LinkedIn",
-      value: "https://www.linkedin.com/in/felipe-corredor-95664434b/", // ← Reemplaza con tu URL
+      label: tx.linkedinLabel,
+      value: "linkedin.com/in/felipe-corredor-95664434b",
       href: "https://www.linkedin.com/in/felipe-corredor-95664434b/",
       icon: (
         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
@@ -76,63 +80,40 @@ const Contact = () => {
 
   return (
     <section
-      id="contact"
+      id="contacto"
       className="relative py-24 px-6 overflow-hidden"
       style={{ background: "#0c0c10" }}
     >
       {/* Orbes de fondo */}
-      <div
-        className="absolute pointer-events-none rounded-full"
-        style={{
-          width: 600, height: 600, top: -100, right: -150,
-          background: "radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)",
-        }}
-      />
-      <div
-        className="absolute pointer-events-none rounded-full"
-        style={{
-          width: 400, height: 400, bottom: 0, left: -100,
-          background: "radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 70%)",
-        }}
-      />
+      <div className="absolute pointer-events-none rounded-full"
+        style={{ width: 600, height: 600, top: -100, right: -150, background: "radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)" }} />
+      <div className="absolute pointer-events-none rounded-full"
+        style={{ width: 400, height: 400, bottom: 0, left: -100, background: "radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 70%)" }} />
 
       <div className="relative max-w-4xl mx-auto" style={{ zIndex: 1 }}>
 
         {/* Encabezado */}
         <div className="mb-16">
-          <div
-            className="flex items-center gap-3 mb-4"
-            style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: "0.3em", textTransform: "uppercase", color: "#6366f1" }}
-          >
+          <div className="flex items-center gap-3 mb-4"
+            style={{ fontFamily: "'DM Mono', monospace", fontSize: 11, letterSpacing: "0.3em", textTransform: "uppercase", color: "#6366f1" }}>
             <span style={{ display: "block", width: 24, height: 1, background: "#6366f1", opacity: 0.7 }} />
-            04 — Contacto
+            {tx.sectionNum}
           </div>
 
-          <h2
-            style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: "clamp(38px, 6vw, 60px)",
-              fontWeight: 800,
-              color: "#f0f0f5",
-              letterSpacing: "-0.02em",
-              lineHeight: 1.05,
-              marginBottom: 16,
-            }}
-          >
-            Hagamos algo{" "}
-            <span
-              style={{
-                background: "linear-gradient(120deg, #818cf8, #c4b5fd)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              increíble juntos
+          <h2 style={{
+            fontFamily: "'Syne', sans-serif",
+            fontSize: "clamp(38px, 6vw, 60px)",
+            fontWeight: 800, color: "#f0f0f5",
+            letterSpacing: "-0.02em", lineHeight: 1.05, marginBottom: 16,
+          }}>
+            {tx.heading1}{" "}
+            <span style={{ background: "linear-gradient(120deg, #818cf8, #c4b5fd)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              {tx.heading2}
             </span>
           </h2>
 
           <p style={{ fontSize: 15, color: "#7a7a8c", lineHeight: 1.7, maxWidth: 420 }}>
-            ¿Tienes un proyecto, una idea o simplemente quieres conectar? Escríbeme y responderé lo antes posible.
+            {tx.subheading}
           </p>
         </div>
 
@@ -141,39 +122,16 @@ const Contact = () => {
           {/* Tarjetas */}
           <div className="flex flex-col gap-4">
             {contactCards.map((card) => (
-              <a
-                key={card.id}
-                href={card.href}
+              <a key={card.id} href={card.href}
                 target={card.id === "linkedin" ? "_blank" : undefined}
                 rel="noreferrer"
                 className="group flex items-center gap-[18px] no-underline"
-                style={{
-                  padding: "20px 22px",
-                  borderRadius: 18,
-                  border: "1px solid rgba(255,255,255,0.06)",
-                  background: "rgba(255,255,255,0.02)",
-                  transition: "border-color 0.3s, background 0.3s, transform 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(99,102,241,0.35)";
-                  e.currentTarget.style.background = "rgba(99,102,241,0.05)";
-                  e.currentTarget.style.transform = "translateY(-2px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
-                  e.currentTarget.style.background = "rgba(255,255,255,0.02)";
-                  e.currentTarget.style.transform = "translateY(0)";
-                }}
+                style={{ padding: "20px 22px", borderRadius: 18, border: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)", transition: "border-color 0.3s, background 0.3s, transform 0.2s" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(99,102,241,0.35)"; e.currentTarget.style.background = "rgba(99,102,241,0.05)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)"; e.currentTarget.style.background = "rgba(255,255,255,0.02)"; e.currentTarget.style.transform = "translateY(0)"; }}
               >
-                <div
-                  className="flex items-center justify-center flex-shrink-0"
-                  style={{
-                    width: 48, height: 48, borderRadius: 13,
-                    background: "rgba(99,102,241,0.1)",
-                    border: "1px solid rgba(99,102,241,0.15)",
-                    color: "#818cf8",
-                  }}
-                >
+                <div className="flex items-center justify-center flex-shrink-0"
+                  style={{ width: 48, height: 48, borderRadius: 13, background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.15)", color: "#818cf8" }}>
                   {card.icon}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -193,104 +151,71 @@ const Contact = () => {
             ))}
 
             {/* Badge disponibilidad */}
-            <div
-              className="flex items-center gap-4"
-              style={{
-                padding: "18px 22px", borderRadius: 18,
-                border: "1px solid rgba(52,211,153,0.15)",
-                background: "rgba(52,211,153,0.04)",
-              }}
-            >
-              <span
-                className="flex-shrink-0 rounded-full"
-                style={{
-                  width: 8, height: 8,
-                  background: "#34d399",
-                  boxShadow: "0 0 0 4px rgba(52,211,153,0.15)",
-                  animation: "availPulse 2s ease-in-out infinite",
-                }}
-              />
+            <div className="flex items-center gap-4"
+              style={{ padding: "18px 22px", borderRadius: 18, border: "1px solid rgba(52,211,153,0.15)", background: "rgba(52,211,153,0.04)" }}>
+              <span className="flex-shrink-0 rounded-full"
+                style={{ width: 8, height: 8, background: "#34d399", boxShadow: "0 0 0 4px rgba(52,211,153,0.15)", animation: "availPulse 2s ease-in-out infinite" }} />
               <span style={{ fontSize: 13, color: "#5a7a6a" }}>
-                <strong style={{ color: "#34d399", fontWeight: 500 }}>Disponible</strong> para proyectos freelance y oportunidades
+                <strong style={{ color: "#34d399", fontWeight: 500 }}>{tx.availableBadge}</strong> {tx.availableText}
               </span>
             </div>
           </div>
 
           {/* Formulario */}
-          <div
-            className="relative overflow-hidden"
-            style={{
-              borderRadius: 22,
-              border: "1px solid rgba(255,255,255,0.06)",
-              background: "rgba(255,255,255,0.025)",
-              padding: "30px 28px",
-            }}
-          >
-            {/* Línea superior decorativa */}
-            <div
-              className="absolute top-0 left-0 right-0"
-              style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent)" }}
-            />
+          <div className="relative overflow-hidden"
+            style={{ borderRadius: 22, border: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.025)", padding: "30px 28px" }}>
+            <div className="absolute top-0 left-0 right-0"
+              style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent)" }} />
 
             {sent ? (
               <div className="flex flex-col items-center justify-center text-center py-10 gap-3">
-                <div
-                  className="flex items-center justify-center rounded-full"
-                  style={{ width: 56, height: 56, background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.2)" }}
-                >
+                <div className="flex items-center justify-center rounded-full"
+                  style={{ width: 56, height: 56, background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.2)" }}>
                   <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#34d399" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
                 <p style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 700, color: "#e0e0f0" }}>
-                  ¡Mensaje enviado!
+                  {tx.successTitle}
                 </p>
-                <p style={{ fontSize: 13, color: "#5a6a60" }}>Gracias por escribir. Te responderé pronto.</p>
+                <p style={{ fontSize: 13, color: "#5a6a60" }}>{tx.successSub}</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div style={{ marginBottom: 8 }}>
                   <p style={{ fontFamily: "'Syne', sans-serif", fontSize: 17, fontWeight: 700, color: "#e8e8f0", marginBottom: 4 }}>
-                    Envíame un mensaje
+                    {tx.formTitle}
                   </p>
-                  <p style={{ fontSize: 13, color: "#5a5a70" }}>Respondo en menos de 24 horas.</p>
+                  <p style={{ fontSize: 13, color: "#5a5a70" }}>{tx.formSub}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label style={labelStyle}>Nombre</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder="Tu nombre" style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+                    <label style={labelStyle}>{tx.labelName}</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} required placeholder={tx.placeholderName} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
                   </div>
                   <div>
-                    <label style={labelStyle}>Email</label>
-                    <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder="correo@ejemplo.com" style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+                    <label style={labelStyle}>{tx.labelEmail}</label>
+                    <input type="email" name="email" value={formData.email} onChange={handleChange} required placeholder={tx.placeholderEmail} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
                   </div>
                 </div>
 
                 <div>
-                  <label style={labelStyle}>Asunto</label>
-                  <input type="text" name="subject" value={formData.subject} onChange={handleChange} placeholder="¿De qué trata el proyecto?" style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
+                  <label style={labelStyle}>{tx.labelSubject}</label>
+                  <input type="text" name="subject" value={formData.subject} onChange={handleChange} placeholder={tx.placeholderSubject} style={inputStyle} onFocus={onFocus} onBlur={onBlur} />
                 </div>
 
                 <div>
-                  <label style={labelStyle}>Mensaje</label>
-                  <textarea name="message" value={formData.message} onChange={handleChange} required rows={4} placeholder="Cuéntame sobre tu idea o proyecto..." style={{ ...inputStyle, resize: "none" }} onFocus={onFocus} onBlur={onBlur} />
+                  <label style={labelStyle}>{tx.labelMessage}</label>
+                  <textarea name="message" value={formData.message} onChange={handleChange} required rows={4} placeholder={tx.placeholderMessage} style={{ ...inputStyle, resize: "none" }} onFocus={onFocus} onBlur={onBlur} />
                 </div>
 
-                <button
-                  type="submit"
-                  style={{
-                    marginTop: 4, padding: "13px 24px",
-                    background: "linear-gradient(135deg, #6366f1 0%, #818cf8 100%)",
-                    border: "none", borderRadius: 12, color: "#fff",
-                    fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700,
-                    letterSpacing: "0.04em", cursor: "pointer",
-                    transition: "opacity 0.2s, transform 0.15s",
-                  }}
+                <button type="submit"
+                  style={{ marginTop: 4, padding: "13px 24px", background: "linear-gradient(135deg, #6366f1 0%, #818cf8 100%)", border: "none", borderRadius: 12, color: "#fff", fontFamily: "'Syne', sans-serif", fontSize: 14, fontWeight: 700, letterSpacing: "0.04em", cursor: "pointer", transition: "opacity 0.2s, transform 0.15s" }}
                   onMouseEnter={(e) => { e.currentTarget.style.opacity = "0.92"; e.currentTarget.style.transform = "translateY(-1px)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}
                 >
-                  Enviar mensaje &nbsp;→
+                  {tx.submit} &nbsp;→
                 </button>
               </form>
             )}

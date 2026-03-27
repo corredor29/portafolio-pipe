@@ -1,6 +1,5 @@
 export const t = {
   es: {
-    // ── Navbar ──
     nav: {
       inicio: "Inicio",
       sobreMi: "Sobre mí",
@@ -10,8 +9,6 @@ export const t = {
       contacto: "Contacto",
       disponible: "Disponible",
     },
-
-    // ── Hero ──
     hero: {
       greeting: "Hola soy Felipe",
       badge: "Disponible para proyectos",
@@ -27,8 +24,6 @@ export const t = {
       floatingBadge: "Fullstack Dev Junior",
       scroll: "scroll",
     },
-
-    // ── AboutMe ──
     about: {
       sectionNum: "02 /",
       sectionLabel: "sobre mí",
@@ -54,23 +49,20 @@ export const t = {
       headline2: "cosas",
       headline3: "que",
       headline4: "importan.",
-      bio: (
-        <>
-          Soy Felipe Corredor Silva, un joven desarrollador <span className="text-white font-medium">Fullstack</span> especializado en{" "}
-          <span className="text-white font-medium">Python</span> y <span className="text-white font-medium">C#</span>, con experiencia
-          creando aplicaciones modernas usando React y Tailwind. También manejo JavaScript, HTML y control de versiones con Git,
-          garantizando proyectos confiables y eficientes. Me destaco por mi capacidad de liderazgo, rapidez para trabajar bajo presión,
-          pensamiento ágil y facilidad para aprender nuevas tecnologías. Disfruto enfrentando desafíos y transformando ideas en
-          productos digitales funcionales y atractivos, aportando valor a cada proyecto en el que participo.
-        </>
-      ),
+      bioParts: [
+        { text: "Soy Felipe Corredor Silva, un joven desarrollador " },
+        { text: "Fullstack", highlight: true },
+        { text: " especializado en " },
+        { text: "Python", highlight: true },
+        { text: " y " },
+        { text: "C#", highlight: true },
+        { text: ", con experiencia creando aplicaciones modernas usando React y Tailwind. También manejo JavaScript, HTML y control de versiones con Git, garantizando proyectos confiables y eficientes. Me destaco por mi capacidad de liderazgo, rapidez para trabajar bajo presión, pensamiento ágil y facilidad para aprender nuevas tecnologías. Disfruto enfrentando desafíos y transformando ideas en productos digitales funcionales y atractivos, aportando valor a cada proyecto en el que participo." },
+      ],
       quote: '"El código limpio no se escribe siguiendo reglas, se escribe cuidando al desarrollador que vendrá después."',
       stackLabel: "Stack principal",
       ctaProjects: "Ver proyectos",
       ctaContact: "Contacto",
     },
-
-    // ── Projects ──
     projects: {
       sectionNum: "03 /",
       sectionLabel: "proyectos",
@@ -92,8 +84,26 @@ export const t = {
         6: "AgendaBot es un bot en Telegram que gestiona citas, tareas y recordatorios, usando Google Sheets como base de datos ligera y manteniendo flujos coherentes con estados persistentes.",
       },
     },
-
-    // ── Contact ──
+    recommendations: {
+      sectionNum: "04 /",
+      sectionLabel: "recomendaciones",
+      heading1: "Lo que",
+      heading2: "dicen",
+      heading3: "de mí.",
+      subheading: "Opiniones de personas con quienes he colaborado.",
+      avgLabel: "Promedio",
+      reviewsLabel: "Reseñas",
+      footerText: "personas han recomendado mi trabajo",
+      list: [
+        { id: 1, name: "Wendy Angelica", role: "Desarrolladora Full Stack Junior", company: "Campusland", stars: 3, text: "Tuve la oportunidad de trabajar con Felipe en varios proyectos, y puedo decir con total confianza que es una persona que se desempeña muy bien en equipo. Destaca por su puntualidad, responsabilidad y eficiencia en cada tarea que asume. Siempre aporta ideas valiosas, mantiene una excelente actitud colaborativa y cumple con sus compromisos de manera impecable. Sin duda, es un gran compañero de trabajo y un profesional en quien se puede confiar.", relation: "Compañera de grupo" },
+        { id: 2, name: "Heiling Bernal", role: "Desarrolladora Frontend", company: "Campusland", stars: 3, text: "Tuve la oportunidad de trabajar y compartir con él, y puedo decir que es una persona con una actitud muy responsable y disciplinada. Se destaca por su compromiso en cada tarea que realiza y por el conocimiento que tiene en lo que hace. Siempre busca hacer las cosas de la mejor manera, mostrando dedicación y constancia. Además, es alguien en quien se puede confiar para cumplir con sus responsabilidades y aportar positivamente al equipo.", relation: "Compañera de trabajo" },
+        { id: 3, name: "Dilan Corredor", role: "Senior Developer", company: null, stars: 3, text: "Se encuentra en un proceso activo de aprendizaje, con buenas bases técnicas y gran disposición para mejorar. Se adapta rápidamente a nuevas tecnologías, aprende de forma autónoma y aplica eficazmente lo aprendido, demostrando capacidad de análisis, resolución de problemas y trabajo en equipo.", relation: "Colaboración de proyecto" },
+        { id: 4, name: "Sebastian Gualdron", role: "Comercial y Product Manager", company: "Campusland", stars: 3, text: "Felipe Corredor Silva ha demostrado ser un programador con un perfil técnico sólido y una capacidad analítica destacable para la resolución de problemas complejos. Su dominio de diversos lenguajes de programación y arquitecturas de software le permite desarrollar soluciones eficientes, escalables y bien estructuradas, manteniendo siempre un código limpio y fácil de mantener.", relation: "Compañero de trabajo" },
+        { id: 5, name: "Juan Tapias", role: "Full Stack Developer Junior", company: "Campusland", stars: 3, text: "Recomiendo a esta persona, quien ha estado acompañando a Felipe desde sus primeros aprendizajes, demostrando siempre esfuerzo por mejorar, responsabilidad y buenas bases técnicas. Su compromiso y dedicación lo hacen confiable y capaz de adaptarse rápidamente a nuevos desafíos.", relation: "Compañero de bootcamp" },
+        { id: 6, name: "Juan Cogollo", role: "Desarrollador Backend Junior", company: "Campusland", stars: 3, text: "Soy programador de software y como compañero recomiendo a Felipe Corredor, ya que he trabajado de la mano con él y he podido comprobar que posee múltiples habilidades técnicas que sabe aplicar eficazmente en su trabajo. Además, es una persona muy colaboradora, comprometida con mejorar continuamente y capaz de adaptarse rápidamente a nuevos desafíos.", relation: "Compañero de trabajo" },
+        { id: 7, name: "Tomas Gonzalez", role: "Desarrollador Backend Junior", company: "Campusland", stars: 3, text: "Felipe Corredor es un programador sobresaliente, con gran dominio técnico y un enfoque claro en la calidad. Se destaca por su excelente trabajo en equipo y sus sólidas habilidades sociales, aportando siempre valor al grupo. Su combinación de aptitudes y actitudes lo convierte en un profesional altamente confiable y en un gran activo para cualquier proyecto.", relation: "Compañero de trabajo" },
+      ],
+    },
     contact: {
       sectionNum: "04 — Contacto",
       heading1: "Hagamos algo",
@@ -119,9 +129,6 @@ export const t = {
     },
   },
 
-  // ════════════════════════════════════════
-  //  E N G L I S H
-  // ════════════════════════════════════════
   en: {
     nav: {
       inicio: "Home",
@@ -132,7 +139,6 @@ export const t = {
       contacto: "Contact",
       disponible: "Available",
     },
-
     hero: {
       greeting: "Hi, I'm Felipe",
       badge: "Available for projects",
@@ -148,7 +154,6 @@ export const t = {
       floatingBadge: "Fullstack Dev Junior",
       scroll: "scroll",
     },
-
     about: {
       sectionNum: "02 /",
       sectionLabel: "about me",
@@ -173,22 +178,20 @@ export const t = {
       headline2: "things",
       headline3: "that",
       headline4: "matter.",
-      bio: (
-        <>
-          I'm Felipe Corredor Silva, a young <span className="text-white font-medium">Fullstack</span> developer specializing in{" "}
-          <span className="text-white font-medium">Python</span> and <span className="text-white font-medium">C#</span>, with experience
-          building modern applications using React and Tailwind. I also work with JavaScript, HTML, and version control with Git,
-          ensuring reliable and efficient projects. I stand out for my leadership skills, ability to work under pressure, agile thinking,
-          and eagerness to learn new technologies. I enjoy tackling challenges and turning ideas into functional and attractive digital
-          products, adding value to every project I'm part of.
-        </>
-      ),
+      bioParts: [
+        { text: "I'm Felipe Corredor Silva, a young " },
+        { text: "Fullstack", highlight: true },
+        { text: " developer specializing in " },
+        { text: "Python", highlight: true },
+        { text: " and " },
+        { text: "C#", highlight: true },
+        { text: ", with experience building modern applications using React and Tailwind. I also work with JavaScript, HTML, and version control with Git, ensuring reliable and efficient projects. I stand out for my leadership skills, ability to work under pressure, agile thinking, and eagerness to learn new technologies. I enjoy tackling challenges and turning ideas into functional and attractive digital products, adding value to every project I'm part of." },
+      ],
       quote: '"Clean code is not written by following rules, it\'s written by caring about the developer who comes next."',
       stackLabel: "Main stack",
       ctaProjects: "View projects",
       ctaContact: "Contact",
     },
-
     projects: {
       sectionNum: "03 /",
       sectionLabel: "projects",
@@ -210,7 +213,26 @@ export const t = {
         6: "AgendaBot is a Telegram bot that manages appointments, tasks, and reminders using Google Sheets as a lightweight database and maintaining coherent flows with persistent states.",
       },
     },
-
+    recommendations: {
+      sectionNum: "04 /",
+      sectionLabel: "recommendations",
+      heading1: "What they",
+      heading2: "say",
+      heading3: "about me.",
+      subheading: "Opinions from people I have collaborated with.",
+      avgLabel: "Average",
+      reviewsLabel: "Reviews",
+      footerText: "people have recommended my work",
+      list: [
+        { id: 1, name: "Wendy Angelica", role: "Junior Full Stack Developer", company: "Campusland", stars: 3, text: "I had the opportunity to work with Felipe on several projects, and I can say with full confidence that he is someone who performs very well in a team. He stands out for his punctuality, responsibility, and efficiency in every task he takes on. He always contributes valuable ideas, maintains an excellent collaborative attitude, and fulfills his commitments impeccably.", relation: "Teammate" },
+        { id: 2, name: "Heiling Bernal", role: "Frontend Developer", company: "Campusland", stars: 3, text: "I had the opportunity to work alongside him, and I can say he is a very responsible and disciplined person. He stands out for his commitment in every task he performs and the knowledge he brings. He always seeks to do things the best way possible, showing dedication and consistency.", relation: "Coworker" },
+        { id: 3, name: "Dilan Corredor", role: "Senior Developer", company: null, stars: 3, text: "He is in an active learning process, with good technical foundations and a great willingness to improve. He adapts quickly to new technologies, learns autonomously, and effectively applies what he has learned, demonstrating analytical skills, problem-solving ability, and teamwork.", relation: "Project collaboration" },
+        { id: 4, name: "Sebastian Gualdron", role: "Commercial & Product Manager", company: "Campusland", stars: 3, text: "Felipe Corredor Silva has proven to be a programmer with a solid technical profile and remarkable analytical capacity for solving complex problems. His command of various programming languages and software architectures allows him to develop efficient, scalable, and well-structured solutions while maintaining clean, maintainable code.", relation: "Coworker" },
+        { id: 5, name: "Juan Tapias", role: "Junior Full Stack Developer", company: "Campusland", stars: 3, text: "I recommend this person, who has been accompanying Felipe since his early learning stages, always showing effort to improve, responsibility, and good technical foundations. His commitment and dedication make him reliable and capable of quickly adapting to new challenges.", relation: "Bootcamp peer" },
+        { id: 6, name: "Juan Cogollo", role: "Junior Backend Developer", company: "Campusland", stars: 3, text: "As a fellow software developer, I recommend Felipe Corredor. I have worked closely with him and can confirm that he possesses multiple technical skills that he knows how to apply effectively in his work. He is also very collaborative, committed to continuous improvement, and able to adapt quickly to new challenges.", relation: "Coworker" },
+        { id: 7, name: "Tomas Gonzalez", role: "Junior Backend Developer", company: "Campusland", stars: 3, text: "Felipe Corredor is an outstanding programmer, with strong technical expertise and a clear focus on quality. He stands out for his excellent teamwork and solid social skills, always adding value to the group. His combination of skills and attitude makes him a highly reliable professional and a great asset to any project.", relation: "Coworker" },
+      ],
+    },
     contact: {
       sectionNum: "04 — Contact",
       heading1: "Let's build something",

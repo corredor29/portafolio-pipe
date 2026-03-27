@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLang } from "../context/LanguageContext";
-import { t } from "../context/translations";
+import { t } from "../context/translations.js";
 import LanguageToggle from "./LanguageToggle";
 
 function Navbar() {

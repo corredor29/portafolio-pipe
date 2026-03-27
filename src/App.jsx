@@ -28,7 +28,6 @@ function App() {
       <div id="contacto">
         <Contact />
       </div>
-
     </div>
   );
 }
