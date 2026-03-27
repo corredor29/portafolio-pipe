@@ -1,9 +1,10 @@
-import foto from "../assets/portada.jpeg";
+import foto from "../assets/portada1.jpeg";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Spline from "@splinetool/react-spline";
 import { useLang } from "../context/LanguageContext";
 import { t } from "../context/translations";
+
 const container = {
   hidden: {},
   show: { transition: { staggerChildren: 0.12, delayChildren: 0.3 } },
@@ -23,7 +24,6 @@ function Hero() {
   const [texto, setTexto] = useState("");
   const [done, setDone] = useState(false);
 
-  // Re-run typewriter whenever language changes
   useEffect(() => {
     setTexto("");
     setDone(false);
@@ -38,6 +38,11 @@ function Hero() {
     }, 75);
     return () => clearInterval(intervalo);
   }, [lang]);
+
+  const scrollTo = (href) => {
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <>
@@ -125,7 +130,9 @@ function Hero() {
             </motion.div>
 
             <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
+              {/* Botón "Ver proyectos" → #proyectos */}
               <button
+                onClick={() => scrollTo("#proyectos")}
                 className="group relative px-7 py-3.5 rounded-xl font-semibold text-white overflow-hidden transition-all duration-300
                   bg-[#3b82f6] hover:bg-[#2563eb] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] active:scale-95"
                 style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.875rem" }}
@@ -136,7 +143,9 @@ function Hero() {
                 </span>
               </button>
 
+              {/* Botón "Sobre mí" → #sobre-mi */}
               <button
+                onClick={() => scrollTo("#sobre-mi")}
                 className="px-7 py-3.5 rounded-xl font-semibold text-gray-300 border border-white/10 bg-white/5 backdrop-blur-sm
                   hover:border-white/25 hover:text-white hover:bg-white/10 transition-all duration-300 active:scale-95"
                 style={{ fontFamily: "'Space Mono', monospace", fontSize: "0.875rem" }}

@@ -19,8 +19,8 @@ function Navbar() {
     { label: tx.inicio,          href: "#inicio" },
     { label: tx.sobreMi,         href: "#sobre-mi" },
     { label: tx.proyectos,       href: "#proyectos" },
-    { label: tx.habilidades,     href: "#habilidades" },
     { label: tx.recomendaciones, href: "#recomendaciones" },
+    { label: tx.habilidades,     href: "#habilidades" },
     { label: tx.contacto,        href: "#contacto" },
   ];
 

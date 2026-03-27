@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLang } from "../context/LanguageContext";
 import { t } from "../context/translations.js";
+import StarBackground from "../components/StarBackground";
 
 const Contact = () => {
   const { lang } = useLang();
@@ -84,6 +85,9 @@ const Contact = () => {
       className="relative py-24 px-6 overflow-hidden"
       style={{ background: "#0c0c10" }}
     >
+      {/* ✅ Fondo de estrellas */}
+      <StarBackground density={120} shootingStars={true} />
+
       {/* Orbes de fondo */}
       <div className="absolute pointer-events-none rounded-full"
         style={{ width: 600, height: 600, top: -100, right: -150, background: "radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%)" }} />

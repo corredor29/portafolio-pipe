@@ -99,10 +99,14 @@ function AboutMe() {
               ))}
             </motion.div>
 
-            {/* Download CV */}
+            {/* Download CV — apunta al PDF en /public */}
             <motion.div variants={fadeUp}>
-              <a href="#" className="flex items-center justify-center gap-3 w-full py-3.5 rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm hover:border-[#3b82f6]/40 hover:bg-[#3b82f6]/8 transition-all duration-300 text-sm text-gray-300 hover:text-white"
-                style={{ fontFamily: "'Space Mono', monospace" }}>
+              <a
+                href="/HojaDeVida_FelipeCorreder.pdf"
+                download="HojaDeVida_FelipeCorreder.pdf"
+                className="flex items-center justify-center gap-3 w-full py-3.5 rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm hover:border-[#3b82f6]/40 hover:bg-[#3b82f6]/8 transition-all duration-300 text-sm text-gray-300 hover:text-white"
+                style={{ fontFamily: "'Space Mono', monospace" }}
+              >
                 <span>↓</span> {tx.downloadCV}
                 <span className="text-[10px] px-2 py-0.5 rounded bg-white/8 text-gray-400">PDF</span>
               </a>
@@ -153,7 +157,6 @@ function AboutMe() {
                 <span className="text-gray-400">{tx.headline4}</span>
               </h2>
 
-              {/* Bio renderizada desde bioParts — sin JSX en translations.js */}
               <p className="text-gray-400 text-lg leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}>
                 {tx.bioParts.map((part, i) =>
                   part.highlight
