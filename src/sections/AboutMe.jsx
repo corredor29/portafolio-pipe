@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import foto from "../assets/portada.jpeg";
 import StarBackground from "../components/StarBackground";
-import { label } from "framer-motion/client";
+import { useLang } from "../context/LanguageContext";
+import { t } from "../translations";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 32 },
@@ -9,24 +10,19 @@ const fadeUp = {
 };
 
 const skills = [
-  { name: "Python", level: 90 },
-   { name: "Git", level: 100 },
-  { name: "JavaScript", level: 80 },
-  { name: "React", level: 82 },
+  { name: "Python",       level: 90 },
+  { name: "Git",          level: 100 },
+  { name: "JavaScript",   level: 80 },
+  { name: "React",        level: 82 },
   { name: "Tailwind CSS", level: 82 },
-  { name: "C#", level: 72 },
-  { name: "MySQL", level: 78 },
+  { name: "C#",           level: 72 },
+  { name: "MySQL",        level: 78 },
 ];
-
-const facts = [
-  { icon: "📍", label: "Ubicación", value: "Colombia" },
-  { icon: "🎓", label: "Formación", value: "Desarrollador Full Stack Junior" },
-  { icon: "💼", label: "Estado", value: "Disponible" },
-  { icon: "🌐", label: "Idiomas", value: "ES / EN" },
-];
-
 
 function AboutMe() {
+  const { lang } = useLang();
+  const tx = t[lang].about;
+
   return (
     <section id="sobre-mi" className="relative w-full min-h-screen bg-black text-white overflow-hidden">
 
@@ -46,13 +42,14 @@ function AboutMe() {
           transition={{ duration: 0.5 }}
           className="flex items-center gap-3 mb-16"
         >
-          <span className="text-[#3b82f6] text-xs tracking-[0.3em] uppercase" style={{ fontFamily: "'Space Mono', monospace" }}>02 /</span>
+          <span className="text-[#3b82f6] text-xs tracking-[0.3em] uppercase" style={{ fontFamily: "'Space Mono', monospace" }}>{tx.sectionNum}</span>
           <span className="w-12 h-px bg-[#3b82f6]/40" />
-          <span className="text-gray-500 text-xs tracking-[0.2em] uppercase" style={{ fontFamily: "'Space Mono', monospace" }}>sobre mí</span>
+          <span className="text-gray-500 text-xs tracking-[0.2em] uppercase" style={{ fontFamily: "'Space Mono', monospace" }}>{tx.sectionLabel}</span>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
+          {/* Left column */}
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -60,6 +57,7 @@ function AboutMe() {
             variants={{ show: { transition: { staggerChildren: 0.1 } } }}
             className="flex flex-col gap-6"
           >
+            {/* Profile card */}
             <motion.div variants={fadeUp}>
               <div className="relative rounded-2xl overflow-hidden border border-white/8 bg-black/40 backdrop-blur-sm">
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-[#3b82f6]/60 via-[#3b82f6]/20 to-transparent" />
@@ -79,11 +77,11 @@ function AboutMe() {
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white mb-1" style={{ fontFamily: "'Space Mono', monospace" }}>Felipe Corredor Silva</h3>
-                    <p className="text-[#3b82f6] text-sm mb-3" style={{ fontFamily: "'Space Mono', monospace" }}>Fullstack Developer Junior</p>
+                    <p className="text-[#3b82f6] text-sm mb-3" style={{ fontFamily: "'Space Mono', monospace" }}>{tx.role}</p>
                     <div className="flex gap-2">
-                      {["React", "Python", "C#"].map((t) => (
-                        <span key={t} className="px-2 py-0.5 text-[10px] rounded border border-white/10 bg-white/5 text-gray-400"
-                          style={{ fontFamily: "'Space Mono', monospace" }}>{t}</span>
+                      {["React", "Python", "C#"].map((tag) => (
+                        <span key={tag} className="px-2 py-0.5 text-[10px] rounded border border-white/10 bg-white/5 text-gray-400"
+                          style={{ fontFamily: "'Space Mono', monospace" }}>{tag}</span>
                       ))}
                     </div>
                   </div>
@@ -91,8 +89,9 @@ function AboutMe() {
               </div>
             </motion.div>
 
+            {/* Facts grid */}
             <motion.div variants={fadeUp} className="grid grid-cols-2 gap-3">
-              {facts.map(({ icon, label, value }) => (
+              {tx.facts.map(({ icon, label, value }) => (
                 <div key={label} className="flex items-center gap-3 p-4 rounded-xl border border-white/6 bg-black/40 backdrop-blur-sm hover:border-[#3b82f6]/30 hover:bg-white/5 transition-all duration-300">
                   <span className="text-xl">{icon}</span>
                   <div>
@@ -103,33 +102,26 @@ function AboutMe() {
               ))}
             </motion.div>
 
+            {/* Download CV */}
             <motion.div variants={fadeUp}>
               <a href="#" className="flex items-center justify-center gap-3 w-full py-3.5 rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm hover:border-[#3b82f6]/40 hover:bg-[#3b82f6]/8 transition-all duration-300 text-sm text-gray-300 hover:text-white"
                 style={{ fontFamily: "'Space Mono', monospace" }}>
-                <span>↓</span> Descargar CV
+                <span>↓</span> {tx.downloadCV}
                 <span className="text-[10px] px-2 py-0.5 rounded bg-white/8 text-gray-400">PDF</span>
               </a>
             </motion.div>
 
-            {/* ── HOBBIES ── */}
+            {/* Hobbies */}
             <motion.div variants={fadeUp}>
               <div className="rounded-2xl border border-white/8 bg-black/40 backdrop-blur-sm p-5">
                 <p className="text-[10px] text-gray-500 tracking-[0.25em] uppercase mb-4"
-                  style={{ fontFamily: "'Space Mono', monospace" }}>Intereses</p>
+                  style={{ fontFamily: "'Space Mono', monospace" }}>{tx.hobbiesLabel}</p>
                 <div className="grid grid-cols-2 gap-2.5">
-                  {[
-                    { emoji: "🎮", label: "Videojuegos", sub: "Strategy / RPG" },
-                    { emoji: "🎵", label: "Música",      sub: "Cumbiar / Electrónica" },
-                    { emoji: "📚", label: "Lectura",     sub: "Ciencia / Ficción" },
-                    { emoji: "🚀", label: "Tecnología",  sub: "IA / Open Source" },
-                    { emoji: "🏓", label: "Ping Pong", sub: "Atacante" },
-                    { emoji: "⚽", label: "Fútbol",      sub: "Jugador / Hincha" },
-                  ].map(({ emoji, label, sub }) => (
+                  {tx.hobbies.map(({ emoji, label, sub }) => (
                     <div key={label}
                       className="group flex items-center gap-3 px-3.5 py-3 rounded-xl border border-white/6 bg-white/[0.02]
                         hover:border-[#3b82f6]/35 hover:bg-[#3b82f6]/6 hover:-translate-y-px transition-all duration-250 cursor-default">
-                      <div className="w-9 h-9 rounded-[9px] flex items-center justify-center text-[17px] flex-shrink-0
-                        bg-white/[0.04] border border-white/6">
+                      <div className="w-9 h-9 rounded-[9px] flex items-center justify-center text-[17px] flex-shrink-0 bg-white/[0.04] border border-white/6">
                         {emoji}
                       </div>
                       <div className="min-w-0">
@@ -143,9 +135,9 @@ function AboutMe() {
                 </div>
               </div>
             </motion.div>
-
           </motion.div>
 
+          {/* Right column */}
           <motion.div
             initial="hidden"
             whileInView="show"
@@ -155,24 +147,28 @@ function AboutMe() {
           >
             <motion.div variants={fadeUp}>
               <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-6" style={{ fontFamily: "'Space Mono', monospace" }}>
-                Construyo <span className="relative inline-block"><span className="text-[#3b82f6]">cosas</span><span className="absolute -bottom-1 left-0 right-0 h-px bg-[#3b82f6]/40" /></span> que <br />
-                <span className="text-gray-400">importan.</span>
+                {tx.headline1}{" "}
+                <span className="relative inline-block">
+                  <span className="text-[#3b82f6]">{tx.headline2}</span>
+                  <span className="absolute -bottom-1 left-0 right-0 h-px bg-[#3b82f6]/40" />
+                </span>{" "}
+                {tx.headline3} <br />
+                <span className="text-gray-400">{tx.headline4}</span>
               </h2>
               <p className="text-gray-400 text-lg leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}>
-                Soy Felipe Corredor Silva, un joven desarrollador <span className="text-white font-medium">Fullstack</span> 
-                 especializado en  <span className="text-white font-medium">Python</span> y <span className="text-white font-medium">C#</span>, con experiencia creando aplicaciones modernas usando React y Tailwind. También manejo JavaScript, HTML y control de versiones con Git, garantizando proyectos confiables y eficientes
-                tecnologías, Me destaco por mi capacidad de liderazgo, rapidez para trabajar bajo presión, pensamiento ágil y facilidad para aprender nuevas tecnologías. Disfruto enfrentando desafíos y transformando ideas en productos digitales funcionales y atractivos, aportando valor a cada proyecto en el que participo..
+                {tx.bio}
               </p>
             </motion.div>
 
             <motion.blockquote variants={fadeUp} className="relative pl-5 border-l-2 border-[#3b82f6]/50">
               <p className="text-gray-300 italic text-base leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                "El código limpio no se escribe siguiendo reglas, se escribe cuidando al desarrollador que vendrá después."
+                {tx.quote}
               </p>
             </motion.blockquote>
 
+            {/* Skills bars */}
             <motion.div variants={fadeUp} className="space-y-4">
-              <p className="text-xs text-gray-500 tracking-[0.2em] uppercase mb-5" style={{ fontFamily: "'Space Mono', monospace" }}>Stack principal</p>
+              <p className="text-xs text-gray-500 tracking-[0.2em] uppercase mb-5" style={{ fontFamily: "'Space Mono', monospace" }}>{tx.stackLabel}</p>
               {skills.map(({ name, level }, i) => (
                 <div key={name}>
                   <div className="flex justify-between items-center mb-1.5">
@@ -196,12 +192,12 @@ function AboutMe() {
               <a href="#proyectos"
                 className="group px-6 py-3 rounded-xl bg-[#3b82f6] text-white text-sm font-semibold hover:bg-[#2563eb] hover:shadow-[0_0_24px_rgba(59,130,246,0.4)] transition-all duration-300 active:scale-95 flex items-center gap-2"
                 style={{ fontFamily: "'Space Mono', monospace" }}>
-                Ver proyectos <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
+                {tx.ctaProjects} <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
               </a>
               <a href="#contacto"
                 className="px-6 py-3 rounded-xl border border-white/10 bg-black/40 backdrop-blur-sm text-gray-300 text-sm hover:border-white/25 hover:text-white hover:bg-white/10 transition-all duration-300 active:scale-95"
                 style={{ fontFamily: "'Space Mono', monospace" }}>
-                Contacto
+                {tx.ctaContact}
               </a>
             </motion.div>
           </motion.div>

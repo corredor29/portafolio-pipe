@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
+import { useLang } from "../context/LanguageContext";
+import { t } from "../context/translations";
+import LanguageToggle from "./LanguageToggle";
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState("Inicio");
+  const { lang } = useLang();
+  const tx = t[lang].nav;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -11,12 +16,12 @@ function Navbar() {
   }, []);
 
   const links = [
-    { label: "Inicio",           href: "#inicio" },
-    { label: "Sobre mí",         href: "#sobre-mi" },
-    { label: "Proyectos",        href: "#proyectos" },
-    { label: "Habilidades",      href: "#habilidades" },
-    { label: "Recomendaciones",  href: "#recomendaciones" },
-    { label: "Contacto",         href: "#contacto" },
+    { label: tx.inicio,          href: "#inicio" },
+    { label: tx.sobreMi,         href: "#sobre-mi" },
+    { label: tx.proyectos,       href: "#proyectos" },
+    { label: tx.habilidades,     href: "#habilidades" },
+    { label: tx.recomendaciones, href: "#recomendaciones" },
+    { label: tx.contacto,        href: "#contacto" },
   ];
 
   const handleClick = (label, href) => {
@@ -24,6 +29,11 @@ function Navbar() {
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth" });
   };
+
+  // keep active label in sync when language changes
+  useEffect(() => {
+    setActive(tx.inicio);
+  }, [lang]);
 
   return (
     <nav
@@ -36,7 +46,7 @@ function Navbar() {
       <div className="max-w-6xl mx-auto px-8 flex justify-between items-center">
         {/* Logo */}
         <button
-          onClick={() => handleClick("Inicio", "#inicio")}
+          onClick={() => handleClick(tx.inicio, "#inicio")}
           className="group flex items-center gap-2 cursor-pointer select-none"
         >
           <span
@@ -52,7 +62,7 @@ function Navbar() {
         {/* Links */}
         <ul className="hidden md:flex items-center gap-0.5">
           {links.map(({ label, href }) => (
-            <li key={label}>
+            <li key={href}>
               <button
                 onClick={() => handleClick(label, href)}
                 className={`relative px-3 py-2 text-xs font-medium tracking-wide transition-all duration-300 rounded-lg cursor-pointer
@@ -73,16 +83,20 @@ function Navbar() {
           ))}
         </ul>
 
-        {/* CTA badge */}
-        <button
-          onClick={() => handleClick("Contacto", "#contacto")}
-          className="hidden md:flex items-center gap-2 px-5 py-2 rounded-full border border-[#3b82f6]/40 text-[#3b82f6] text-sm font-semibold
-            hover:bg-[#3b82f6] hover:text-white hover:border-[#3b82f6] transition-all duration-300 cursor-pointer"
-          style={{ fontFamily: "'Space Mono', monospace" }}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-[#3b82f6] animate-pulse" />
-          Disponible
-        </button>
+        {/* Right side: language toggle + available badge */}
+        <div className="hidden md:flex items-center gap-3">
+          <LanguageToggle />
+
+          <button
+            onClick={() => handleClick(tx.contacto, "#contacto")}
+            className="flex items-center gap-2 px-5 py-2 rounded-full border border-[#3b82f6]/40 text-[#3b82f6] text-sm font-semibold
+              hover:bg-[#3b82f6] hover:text-white hover:border-[#3b82f6] transition-all duration-300 cursor-pointer"
+            style={{ fontFamily: "'Space Mono', monospace" }}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[#3b82f6] animate-pulse" />
+            {tx.disponible}
+          </button>
+        </div>
       </div>
     </nav>
   );
