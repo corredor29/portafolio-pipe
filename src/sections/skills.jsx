@@ -1,299 +1,168 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import StarBackground from "../components/StarBackground";
-import { useLang } from "../context/LanguageContext";
-import { t } from "../context/translations";
- 
-// ── Iconos SVG inline ──────────────────────────────────────────────────────────
-const icons = {
-  react: (
-    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6">
-      <circle cx="12" cy="12" r="2.5" fill="#61dafb" />
-      <ellipse cx="12" cy="12" rx="10" ry="4" stroke="#61dafb" strokeWidth="1.2" fill="none" />
-      <ellipse cx="12" cy="12" rx="10" ry="4" stroke="#61dafb" strokeWidth="1.2" fill="none" transform="rotate(60 12 12)" />
-      <ellipse cx="12" cy="12" rx="10" ry="4" stroke="#61dafb" strokeWidth="1.2" fill="none" transform="rotate(120 12 12)" />
-    </svg>
-  ),
-  js: (
-    <svg viewBox="0 0 24 24" fill="#f7df1e" className="w-6 h-6">
-      <rect width="24" height="24" rx="3" fill="#f7df1e" />
-      <path d="M6 17.5c.4.7 1 1.2 2 1.2 1.1 0 1.7-.5 1.7-1.3 0-.9-.7-1.2-1.8-1.7L7.3 15c-1.5-.6-2.4-1.5-2.4-3.1 0-1.8 1.4-3 3.4-3 1.4 0 2.5.5 3.2 1.8l-1.7 1.1c-.4-.7-.8-1-1.5-1-.7 0-1.1.4-1.1.9 0 .7.4.9 1.4 1.3l.6.3c1.8.8 2.8 1.6 2.8 3.3 0 2-1.5 3.2-3.6 3.2-2 0-3.3-1-3.9-2.3L6 17.5zm8.5.2c.5.8 1.1 1.4 2.2 1.4 1 0 1.6-.5 1.6-1.2V11h2.1v7c0 2-1.2 3-3 3-1.6 0-2.6-.8-3.1-1.9l2.2-1.4z" fill="#000" />
-    </svg>
-  ),
-  tailwind: (
-    <svg viewBox="0 0 24 24" fill="#06b6d4" className="w-6 h-6">
-      <path d="M12 6C9.6 6 8.1 7.2 7.5 9.6c.9-1.2 1.95-1.65 3.15-1.35.685.171 1.174.668 1.715 1.219C13.25 10.43 14.18 11.4 16.5 11.4c2.4 0 3.9-1.2 4.5-3.6-.9 1.2-1.95 1.65-3.15 1.35-.685-.171-1.174-.668-1.715-1.219C15.25 6.97 14.32 6 12 6zM7.5 11.4C5.1 11.4 3.6 12.6 3 15c.9-1.2 1.95-1.65 3.15-1.35.685.171 1.174.668 1.715 1.219C8.75 15.83 9.68 16.8 12 16.8c2.4 0 3.9-1.2 4.5-3.6-.9 1.2-1.95 1.65-3.15 1.35-.685-.171-1.174-.668-1.715-1.219C10.75 12.37 9.82 11.4 7.5 11.4z" />
-    </svg>
-  ),
-  html: (
-    <svg viewBox="0 0 24 24" fill="#e34f26" className="w-6 h-6">
-      <path d="M4 3l1.5 17L12 22l6.5-2L20 3H4zm13.1 5H8.9l.2 2h7.8l-.6 6.5L12 18l-4.3-1.5-.3-3.2h2l.2 1.7 2.4.7 2.4-.7.3-3H8.2L7.8 8h8.5l-.2 5z" />
-    </svg>
-  ),
-  python: (
-    <svg viewBox="0 0 24 24" className="w-6 h-6">
-      <path d="M11.9 2C8.7 2 7 3.5 7 5.5V8h5v1H5.5C3.6 9 2 10.7 2 13.1s1.3 4.1 3.5 4.4l.5.1V20c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-1h-5v-1h7.5c2.2 0 3.5-1.7 3.5-4.1V9.9C20 7.5 18.7 6 16.5 6H16V5.5C16 3.5 14.3 2 11.9 2zM9.5 4.5A1 1 0 1 1 9.5 6.5 1 1 0 0 1 9.5 4.5z" fill="#3776ab" />
-      <path d="M12.1 22c3.2 0 4.9-1.5 4.9-3.5V16h-5v-1h6.5c1.9 0 3.5-1.7 3.5-4.1S20.7 6.8 18.5 6.5l-.5-.1V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v1h5v1H8.5C6.3 7 5 8.7 5 11.1V14c0 2.4 1.3 3.9 3.5 4.2l.5.1V19c0 1.1.9 2 2 2h1.1zm2.4-2.5A1 1 0 1 1 14.5 21.5 1 1 0 0 1 14.5 19.5z" fill="#ffd43b" />
-    </svg>
-  ),
-  csharp: (
-    <svg viewBox="0 0 24 24" fill="#9b4f96" className="w-6 h-6">
-      <path d="M12 2L2 7v10l10 5 10-5V7L12 2zm0 2.3l7.7 3.85-7.7 3.85-7.7-3.85L12 4.3zM4 8.9l7 3.5V20l-7-3.5V8.9zm9 11.1v-7.6l7-3.5v7.6l-7 3.5z" />
-      <text x="9" y="14" fontSize="6" fontWeight="bold" fill="white">#</text>
-    </svg>
-  ),
-  mysql: (
-    <svg viewBox="0 0 24 24" fill="#f59e0b" className="w-6 h-6">
-      <path d="M12 2C8 2 5 3.5 5 5.5S8 9 12 9s7-1.5 7-3.5S16 2 12 2zm0 8C8 10 5 11.3 5 13v2.5C5 17.5 8 19 12 19s7-1.5 7-3.5V13c0-1.7-3-3-7-3zm0 10c-4 0-7-1.3-7-3v2.5C5 21.5 8 23 12 23s7-1.5 7-3.5V17c0 1.7-3 3-7 3z" />
-    </svg>
-  ),
-  git: (
-    <svg viewBox="0 0 24 24" fill="#f97316" className="w-6 h-6">
-      <path d="M23.5 11.5l-11-11a1.7 1.7 0 0 0-2.4 0l-2.4 2.4 3 3a2 2 0 0 1 2.5 2.5l2.9 2.9a2 2 0 1 1-1.2 1.2L12 9.6v7a2 2 0 1 1-1.6 0V9.3A2 2 0 0 1 9.3 7L6.5 4.2.5 10.1a1.7 1.7 0 0 0 0 2.4l11 11a1.7 1.7 0 0 0 2.4 0l9.6-9.6a1.7 1.7 0 0 0 0-2.4z" />
-    </svg>
-  ),
-  github: (
-    <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6">
-      <path d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.09.68-.22.68-.49v-1.71c-2.78.62-3.37-1.37-3.37-1.37-.45-1.17-1.11-1.49-1.11-1.49-.91-.64.07-.62.07-.62 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.37-2.22-.26-4.55-1.14-4.55-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.4 9.4 0 0 1 12 6.84c.85 0 1.7.12 2.5.34 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.06.36.32.68.94.68 1.9v2.82c0 .27.18.59.69.49C19.14 20.64 22 16.79 22 12.26 22 6.58 17.52 2 12 2z" />
-    </svg>
-  ),
-  node: (
-    <svg viewBox="0 0 24 24" fill="#22c55e" className="w-6 h-6">
-      <path d="M12 1.85L2 7.28v9.43L12 22.15l10-5.44V7.28L12 1.85zm0 2.3l7.7 4.2-7.7 4.2-7.7-4.2 7.7-4.2zM4 9.18l7 3.82v7.63l-7-3.82V9.18zm9 11.45v-7.63l7-3.82v7.63l-7 3.82z" />
-    </svg>
-  ),
-  leadership: "🧭",
-  teamwork: "🤝",
-  communication: "💬",
-  pressure: "⚡",
-  learning: "🚀",
-  problemsolving: "🔍",
-  creativity: "🎨",
-  punctuality: "⏰",
+import { useLang } from "../context/useLang";
+
+const EXPO = [0.22, 1, 0.36, 1];
+const MONO = { fontFamily: "'Space Mono', monospace" };
+const SANS = { fontFamily: "'DM Sans', sans-serif" };
+const DISPLAY = { fontFamily: "'Anton', sans-serif" };
+const C = { deep: "#191D23", accent: "#57707A", steel: "#7B919C", mist: "#989DAA", rose: "#C5BAC4", ink: "#DEDCDC" };
+const pad = (n) => String(n).padStart(2, "0");
+
+const TECH = {
+  backend: ["C#", ".NET / ASP.NET", "Python", "PHP", "Node.js"],
+  frontend: ["React", "JavaScript", "Tailwind CSS", "HTML/CSS"],
+  data: ["MySQL", "PostgreSQL", "Oracle", "Supabase", "Firebase", "Git", "GitHub"],
 };
- 
-const techColors = {
-  react: "#61dafb", js: "#f7df1e", tailwind: "#06b6d4", html: "#e34f26",
-  python: "#3776ab", csharp: "#9b4f96", mysql: "#f59e0b", git: "#f97316",
-  github: "#ffffff", node: "#22c55e",
+
+const COPY = {
+  es: {
+    title: "Habilidades", kicker: "05 — Stack", index: "Índice", hint: "↑ ↓ / J K",
+    cats: [
+      { key: "backend", label: "Backend", lead: "Lenguajes y frameworks del servidor." },
+      { key: "frontend", label: "Frontend", lead: "Interfaces y experiencia." },
+      { key: "data", label: "Datos y tools", lead: "Bases de datos, backend-as-a-service y control de versiones." },
+      { key: "soft", label: "Blandas", lead: "Cómo trabajo con equipos." },
+    ],
+    soft: [
+      ["Liderazgo", "Capacidad de guiar equipos y tomar decisiones bajo incertidumbre."],
+      ["Trabajo en equipo", "Colaboro activamente, escucho y adapto mi trabajo al ritmo del equipo."],
+      ["Comunicación", "Transmito ideas técnicas con claridad a audiencias técnicas y no técnicas."],
+      ["Trabajo bajo presión", "Mantengo la calidad y enfoque en entornos de alta exigencia y plazos ajustados."],
+      ["Aprendizaje continuo", "Me adapto rápidamente a nuevas tecnologías y metodologías de forma autónoma."],
+      ["Resolución de problemas", "Analizo, descompongo y resuelvo problemas complejos con pensamiento lógico."],
+      ["Creatividad", "Aporto soluciones originales y diseños pensados en la experiencia del usuario."],
+      ["Puntualidad", "Cumplo con los tiempos establecidos y gestiono mis prioridades eficientemente."],
+    ],
+  },
+  en: {
+    title: "Skills", kicker: "05 — Stack", index: "Index", hint: "↑ ↓ / J K",
+    cats: [
+      { key: "backend", label: "Backend", lead: "Server-side languages and frameworks." },
+      { key: "frontend", label: "Frontend", lead: "Interfaces and experience." },
+      { key: "data", label: "Data & Tools", lead: "Databases, backend-as-a-service and version control." },
+      { key: "soft", label: "Soft", lead: "How I work with teams." },
+    ],
+    soft: [
+      ["Leadership", "Ability to guide teams and make decisions under uncertainty."],
+      ["Teamwork", "I collaborate actively, listen, and adapt my work to the team's rhythm."],
+      ["Communication", "I convey technical ideas clearly to both technical and non-technical audiences."],
+      ["Working under pressure", "I maintain quality and focus in high-demand environments with tight deadlines."],
+      ["Continuous learning", "I quickly adapt to new technologies and methodologies autonomously."],
+      ["Problem solving", "I analyze, break down and solve complex problems with logical thinking."],
+      ["Creativity", "I bring original solutions and designs focused on the user experience."],
+      ["Punctuality", "I meet deadlines and manage my priorities efficiently."],
+    ],
+  },
 };
- 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
-};
- 
-// ── Componente barra de habilidad ──────────────────────────────────────────────
-function SkillBar({ name, level, color, index }) {
+
+function Row({ i, name, desc }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -16 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.06 }}
-    >
-      <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs text-gray-300" style={{ fontFamily: "'Space Mono', monospace" }}>{name}</span>
-        <span className="text-[10px] text-gray-500" style={{ fontFamily: "'Space Mono', monospace" }}>{level}%</span>
+    <motion.li
+      initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: EXPO, delay: 0.15 + i * 0.05 }}
+      className="group flex items-baseline gap-5 py-2.5 md:py-3 border-b transition-colors"
+      style={{ borderColor: `${C.steel}38` }}>
+      <span className="text-[11px] tracking-[0.2em] shrink-0" style={{ ...MONO, color: C.accent }}>{pad(i + 1)}</span>
+      <div className="min-w-0">
+        <div className={`${desc ? "text-sm md:text-[15px]" : "text-lg md:text-2xl"} uppercase tracking-[0.08em] transition-colors group-hover:text-[#C5BAC4]`}
+          style={{ ...MONO, color: C.ink }}>{name}</div>
+        {desc && <p className="mt-0.5 text-[13px] leading-snug transition-colors group-hover:text-[#DEDCDC]" style={{ ...SANS, color: C.mist }}>{desc}</p>}
       </div>
-      <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-        <motion.div
-          initial={{ width: 0 }}
-          whileInView={{ width: `${level}%` }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, delay: index * 0.06 + 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className="h-full rounded-full"
-          style={{ background: `linear-gradient(90deg, ${color}, ${color}80)` }}
-        />
-      </div>
-    </motion.div>
+    </motion.li>
   );
 }
- 
-// ── Tarjeta tech ───────────────────────────────────────────────────────────────
-function TechCard({ id, name, index }) {
-  const color = techColors[id] || "#3b82f6";
-  const icon = icons[id];
+
+function Stage({ cat, index, total, copy }) {
+  const items = cat.key === "soft" ? copy.soft.map(([n, d]) => ({ n, d })) : TECH[cat.key].map((n) => ({ n }));
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
-      whileHover={{ y: -4, scale: 1.03 }}
-      className="group flex flex-col items-center gap-2 p-4 rounded-2xl border border-white/6 bg-black/40 backdrop-blur-sm
-        hover:border-white/15 hover:bg-white/5 transition-all duration-300 cursor-default"
-      style={{ boxShadow: `0 0 0 0 ${color}` }}
-    >
-      <div
-        className="w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110"
-        style={{ background: `${color}15`, border: `1px solid ${color}30` }}
-      >
-        {typeof icon === "string" ? <span className="text-2xl">{icon}</span> : icon}
-      </div>
-      <span className="text-[11px] text-gray-400 group-hover:text-white transition-colors duration-300 text-center"
-        style={{ fontFamily: "'Space Mono', monospace" }}>{name}</span>
-      <motion.div
-        className="w-1 h-1 rounded-full"
-        style={{ background: color, boxShadow: `0 0 6px ${color}` }}
-        animate={{ opacity: [0.4, 1, 0.4] }}
-        transition={{ repeat: Infinity, duration: 2, delay: index * 0.15 }}
-      />
-    </motion.div>
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.div key={cat.key}
+        initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)", y: 18 }}
+        animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)", y: 0 }}
+        exit={{ opacity: 0, y: -10, transition: { duration: 0.25, ease: EXPO } }}
+        transition={{ duration: 0.8, ease: EXPO }}
+        className="relative h-full flex flex-col justify-center">
+        <motion.span aria-hidden="true" className="pointer-events-none select-none absolute -top-6 md:-top-10 -left-2 leading-none origin-bottom-left"
+          initial={{ opacity: 0, scale: 1.12, y: 24, clipPath: "inset(100% 0 0 0)" }}
+          animate={{ opacity: 1, scale: 1, y: 0, clipPath: "inset(0% 0 0 0)" }}
+          transition={{ duration: 0.85, ease: EXPO, delay: 0.05 }}
+          style={{ ...DISPLAY, fontSize: "clamp(9rem, min(22vw, 34vh), 20rem)", color: "transparent", WebkitTextStroke: `1px ${C.rose}55` }}>
+          {pad(index + 1)}
+        </motion.span>
+        <div className="relative mb-4 text-[11px] uppercase tracking-[0.3em]" style={{ ...MONO, color: C.steel }}>
+          <span style={{ color: C.rose }}>{pad(index + 1)}</span> / {pad(total)} — {cat.label}
+        </div>
+        <h3 className="relative uppercase leading-[0.9]" style={{ ...DISPLAY, color: C.ink, fontSize: "clamp(3rem, 7vw, 6.5rem)" }}>{cat.label}</h3>
+        <p className="relative mt-3 mb-6 text-base md:text-lg" style={{ ...SANS, color: C.mist }}>{cat.lead}</p>
+        <ul className={`relative border-t ${cat.key === "soft" ? "grid md:grid-cols-2 md:gap-x-10" : "max-w-xl"}`} style={{ borderColor: `${C.steel}38` }}>
+          {items.map((it, i) => <Row key={it.n} i={i} name={it.n} desc={it.d} />)}
+        </ul>
+      </motion.div>
+    </AnimatePresence>
   );
 }
- 
-// ── Tarjeta soft skill ─────────────────────────────────────────────────────────
-function SoftCard({ emoji, label, desc, index, color }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.07 }}
-      whileHover={{ y: -3 }}
-      className="group flex items-start gap-3 p-4 rounded-2xl border border-white/6 bg-black/40 backdrop-blur-sm
-        hover:border-white/15 hover:bg-white/5 transition-all duration-300"
-    >
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl"
-        style={{ background: `${color}15`, border: `1px solid ${color}25` }}>
-        {emoji}
-      </div>
-      <div>
-        <p className="text-sm text-white font-medium mb-0.5" style={{ fontFamily: "'Space Mono', monospace" }}>{label}</p>
-        <p className="text-[11px] text-gray-500 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>{desc}</p>
-      </div>
-      <span className="ml-auto w-1.5 h-1.5 rounded-full flex-shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
-    </motion.div>
-  );
-}
- 
-// ── Componente principal ───────────────────────────────────────────────────────
-function SkillsPortfolio() {
+
+const SkillsPortfolio = () => {
   const { lang } = useLang();
-  const tx = t[lang].skills;
-  const [activeTab, setActiveTab] = useState("tech");
- 
+  const copy = COPY[lang] || COPY.es;
+  const [active, setActive] = useState(0);
+  const ref = useRef(null);
+  const total = copy.cats.length;
+
+  useEffect(() => {
+    const onKey = (e) => {
+      const el = ref.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      if (r.top > window.innerHeight * 0.5 || r.bottom < window.innerHeight * 0.5) return;
+      if (["ArrowDown", "j", "ArrowRight"].includes(e.key)) setActive((a) => (a + 1) % total);
+      if (["ArrowUp", "k", "ArrowLeft"].includes(e.key)) setActive((a) => (a - 1 + total) % total);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [total]);
+
   return (
-    <section id="habilidades" className="relative w-full min-h-screen bg-black text-white overflow-hidden">
-      <StarBackground density={110} shootingStars={false} />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60 pointer-events-none z-[1]" />
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#a855f7]/30 to-transparent z-[2]" />
-      <div className="absolute top-1/4 right-0 w-[500px] h-[500px] bg-[#a855f7]/6 rounded-full blur-[130px] pointer-events-none z-[1]" />
-      <div className="absolute bottom-0 left-1/4 w-[400px] h-[300px] bg-[#3b82f6]/5 rounded-full blur-[100px] pointer-events-none z-[1]" />
- 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-16 py-28">
- 
-        {/* Label */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.5 }}
-          className="flex items-center gap-3 mb-16"
-        >
-          <span className="text-[#a855f7] text-xs tracking-[0.3em] uppercase" style={{ fontFamily: "'Space Mono', monospace" }}>{tx.sectionNum}</span>
-          <span className="w-12 h-px bg-[#a855f7]/40" />
-          <span className="text-gray-500 text-xs tracking-[0.2em] uppercase" style={{ fontFamily: "'Space Mono', monospace" }}>{tx.sectionLabel}</span>
-        </motion.div>
- 
-        {/* Heading */}
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} className="mb-12">
-          <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-4" style={{ fontFamily: "'Space Mono', monospace" }}>
-            {tx.heading1}{" "}
-            <span className="relative inline-block">
-              <span className="text-[#a855f7]">{tx.heading2}</span>
-              <span className="absolute -bottom-1 left-0 right-0 h-px bg-[#a855f7]/40" />
-            </span>
-            {tx.heading3 && <> {tx.heading3}</>}
-          </h2>
-          <p className="text-gray-500 text-sm max-w-lg leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}>
-            {tx.subheading}
-          </p>
-        </motion.div>
- 
-        {/* Tabs */}
-        <motion.div initial="hidden" whileInView="show" viewport={{ once: true }} variants={fadeUp} className="flex gap-2 mb-10">
-          {[
-            { id: "tech", label: tx.tabTech },
-            { id: "soft", label: tx.tabSoft },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className="px-5 py-2.5 rounded-xl text-xs transition-all duration-300"
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                background: activeTab === tab.id ? "rgba(168,85,247,0.15)" : "rgba(255,255,255,0.04)",
-                border: `1px solid ${activeTab === tab.id ? "rgba(168,85,247,0.5)" : "rgba(255,255,255,0.08)"}`,
-                color: activeTab === tab.id ? "#a855f7" : "#6b7280",
-              }}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </motion.div>
- 
-        {/* Tab content */}
-        <AnimatePresence mode="wait">
-          {activeTab === "tech" && (
-            <motion.div
-              key="tech"
-              initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.4 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-12"
-            >
-              {/* Skill bars */}
-              <div className="flex flex-col gap-6">
-                <p className="text-[10px] text-gray-500 tracking-[0.25em] uppercase mb-2" style={{ fontFamily: "'Space Mono', monospace" }}>{tx.barsLabel}</p>
-                {tx.bars.map((skill, i) => (
-                  <SkillBar key={skill.name} name={skill.name} level={skill.level} color={skill.color} index={i} />
-                ))}
-              </div>
- 
-              {/* Tech grid */}
-              <div>
-                <p className="text-[10px] text-gray-500 tracking-[0.25em] uppercase mb-6" style={{ fontFamily: "'Space Mono', monospace" }}>{tx.techLabel}</p>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                  {tx.techStack.map((tech, i) => (
-                    <TechCard key={tech.id} id={tech.id} name={tech.name} index={i} />
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
- 
-          {activeTab === "soft" && (
-            <motion.div
-              key="soft"
-              initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.4 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl"
-            >
-              {tx.softSkills.map((s, i) => (
-                <SoftCard key={s.label} emoji={s.emoji} label={s.label} desc={s.desc} index={i} color={s.color} />
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
- 
-        {/* Stats footer */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex items-center gap-8 mt-16 pt-8 border-t border-white/6"
-        >
-          {tx.stats.map(({ value, label }) => (
-            <div key={label} className="flex flex-col">
-              <span className="text-2xl font-bold text-white" style={{ fontFamily: "'Space Mono', monospace" }}>{value}</span>
-              <span className="text-[10px] text-gray-500 tracking-wider uppercase mt-0.5" style={{ fontFamily: "'Space Mono', monospace" }}>{label}</span>
-            </div>
-          ))}
-        </motion.div>
- 
+    <section ref={ref} id="habilidades-stage" className="relative w-full lg:min-h-[100dvh] flex flex-col overflow-hidden px-6 md:px-12 lg:px-16 pt-24 pb-16 lg:pt-24 lg:pb-12"
+      style={{ background: "linear-gradient(180deg, #191D23 0%, #07080A 55%, #000 100%)" }}>
+      <header className="flex items-end justify-between gap-6 mb-8 lg:mb-6">
+        <motion.h2 initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.9, ease: EXPO }}
+          className="uppercase leading-[0.85]" style={{ ...DISPLAY, color: C.accent, fontSize: "clamp(3rem, 8vw, 7rem)" }}>{copy.title}</motion.h2>
+        <div className="text-right text-[11px] uppercase tracking-[0.3em] pb-2" style={{ ...MONO, color: C.steel }}>
+          <div>{copy.kicker}</div><div className="mt-1" style={{ color: C.rose }}>{pad(total)}</div>
+        </div>
+      </header>
+      <div className="flex-1 grid lg:grid-cols-[62fr_38fr] gap-10 lg:gap-16 min-h-0">
+        <div className="relative min-h-[28rem]">
+          <Stage cat={copy.cats[active]} index={active} total={total} copy={copy} />
+        </div>
+        <nav aria-label={copy.index} className="flex flex-col justify-center">
+          <div className="flex justify-between mb-4 text-[11px] uppercase tracking-[0.3em]" style={{ ...MONO, color: C.steel }}>
+            <span>{copy.index}</span><span style={{ color: C.accent }}>{copy.hint}</span>
+          </div>
+          <ul className="border-t" style={{ borderColor: `${C.steel}38` }}>
+            {copy.cats.map((c, i) => {
+              const on = i === active;
+              return (
+                <li key={c.key} className="border-b" style={{ borderColor: on ? `${C.ink}80` : `${C.steel}38` }}>
+                  <button type="button" onClick={() => setActive(i)} aria-pressed={on}
+                    className={`group w-full flex items-center gap-5 py-4 md:py-5 text-left uppercase tracking-[0.2em] transition-[color,transform] duration-300 cursor-pointer ${on ? "text-[#DEDCDC]" : "text-[#7B919C] hover:text-[#DEDCDC] hover:-translate-y-px"}`}
+                    style={MONO}>
+                    <span className="text-[11px]" style={{ color: on ? C.rose : C.accent }}>{pad(i + 1)}</span>
+                    <span className="flex-1 text-sm md:text-base">{c.label}</span>
+                    {!on && <span aria-hidden className="h-px w-0 group-hover:w-4 transition-all duration-300" style={{ background: `${C.rose}99` }} />}
+                    <motion.span animate={{ width: on ? 40 : 0, opacity: on ? 1 : 0 }} transition={{ duration: 0.5, ease: EXPO }}
+                      className="h-px" style={{ background: C.rose }} />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
       </div>
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent z-[2]" />
     </section>
   );
-}
- 
+};
+
 export default SkillsPortfolio;

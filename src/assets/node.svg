@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 90" width="100%" height="100%">
+  <!-- Node.js 3D Hexagon + Wordmark for dark mode -->
+  <g transform="translate(6, 6)">
+    <!-- 3D Hexagon -->
+    <path fill="#539E43" d="M32 6 L62 23 L62 57 L32 74 L2 57 L2 23 Z"/>
+    <path fill="#68B946" d="M32 6 L32 40 L2 23 Z"/>
+    <path fill="#83CD29" d="M32 6 L62 23 L32 40 Z"/>
+    <path fill="#417E38" d="M2 57 L32 40 L62 57 L32 74 Z"/>
+    <path fill="#215732" d="M32 20 L50 30 L50 50 L32 60 L14 50 L14 30 Z"/>
+    <!-- Letter N in Hexagon -->
+    <path fill="#FFFFFF" d="M24 35 h4 l8 12 v-12 h4 v18 h-4 l-8 -12 v12 h-4 z"/>
+    
+    <!-- Wordmark in bright white & Node green -->
+    <text x="74" y="48" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="27" fill="#FFFFFF" letter-spacing="-0.5px">node</text>
+    <text x="135" y="38" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="16" fill="#83CD29">.js</text>
+  </g>
+</svg>

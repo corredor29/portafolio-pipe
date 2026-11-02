@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Installers accidentally staged
+*.exe
+Herd*.exe
+src/assets/Herd*

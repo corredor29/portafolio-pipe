@@ -4,8 +4,8 @@ export const t = {
       inicio: "Inicio",
       sobreMi: "Sobre mí",
       proyectos: "Proyectos",
-      habilidades: "Habilidades",
       recomendaciones: "Recomendaciones",
+      habilidades: "Habilidades",
       contacto: "Contacto",
       disponible: "Disponible",
     },
@@ -49,14 +49,11 @@ export const t = {
       headline2: "cosas",
       headline3: "que",
       headline4: "importan.",
+      bio: "Hola soy Felipe — Desarrollador Fullstack enfocado en crear experiencias modernas, rápidas y atractivas.",
       bioParts: [
-        { text: "Soy Felipe Corredor Silva, un joven desarrollador " },
+        { text: "Hola soy Felipe — Desarrollador " },
         { text: "Fullstack", highlight: true },
-        { text: " especializado en " },
-        { text: "Python", highlight: true },
-        { text: " y " },
-        { text: "C#", highlight: true },
-        { text: ", con experiencia creando aplicaciones modernas usando React y Tailwind. También manejo JavaScript, HTML y control de versiones con Git, garantizando proyectos confiables y eficientes. Me destaco por mi capacidad de liderazgo, rapidez para trabajar bajo presión, pensamiento ágil y facilidad para aprender nuevas tecnologías. Disfruto enfrentando desafíos y transformando ideas en productos digitales funcionales y atractivos, aportando valor a cada proyecto en el que participo." },
+        { text: " enfocado en crear experiencias modernas, rápidas y atractivas." },
       ],
       quote: '"El código limpio no se escribe siguiendo reglas, se escribe cuidando al desarrollador que vendrá después."',
       stackLabel: "Stack principal",
@@ -75,6 +72,11 @@ export const t = {
       github: "GitHub",
       demo: "Demo",
       viewMore: "Ver más en GitHub",
+      viewDetails: "Ver detalles",
+      modalTitle: "Detalles del Proyecto",
+      modalArchitecture: "Arquitectura y Desafíos",
+      modalFeatures: "Características Clave",
+      modalClose: "Cerrar",
       descriptions: {
         1: "Sitio web funcional que permite a los clientes explorar el hotel, consultar disponibilidad y gestionar reservas, con un panel administrativo para controlar habitaciones y reservas.",
         2: "API RESTful para gestión de tareas con autenticación JWT, roles de usuario y Registramiento de habitaciones.",
@@ -83,6 +85,67 @@ export const t = {
         5: "Aplicación de consola en Python para gestionar colecciones personales de libros, películas o música, permitiendo organizar títulos, registrar detalles y valorar cada elemento de manera sencilla y estructurada.",
         6: "AgendaBot es un bot en Telegram que gestiona citas, tareas y recordatorios, usando Google Sheets como base de datos ligera y manteniendo flujos coherentes con estados persistentes.",
       },
+      details: {
+        1: {
+          fullDescription: "Sistema completo de gestión hotelera diseñado para agilizar la navegación de clientes y la gestión interna. Incluye un módulo de reservas interactivo con filtrado de disponibilidad en tiempo real y un panel de administración restringido.",
+          architecture: "Diseñado con arquitectura por componentes modulares en JavaScript vainilla y CSS optimizado, integrado con almacenamiento de estado en memoria y persistencia dinámica en cliente.",
+          features: [
+            "Sistema de reservas interactivo con consulta de disponibilidad.",
+            "Panel de administración para gestión de habitaciones y precios.",
+            "Interfaz responsive optimizada para dispositivos móviles.",
+            "Catálogo dinámico de servicios del hotel."
+          ]
+        },
+        2: {
+          fullDescription: "API RESTful robusta para la gestión eficiente de tareas y equipos de trabajo. Proporciona autenticación mediante tokens JWT, manejo seguro de sesiones y control de acceso basado en roles (RBAC).",
+          architecture: "Construida con Python y FastAPI siguiendo los principios de arquitectura limpia, validación estricta de esquemas con Pydantic y base de datos relacional MySQL.",
+          features: [
+            "Autenticación JWT y encriptación de contraseñas.",
+            "Control de acceso basado en roles (Admin/User).",
+            "Documentación interactiva automática con Swagger / OpenAPI.",
+            "Filtrado dinámico y paginación de tareas."
+          ]
+        },
+        3: {
+          fullDescription: "Plataforma web corporativa y landing page de alta fidelidad visual para LuxTime. Enfocada en transmitir elegancia, branding de lujo y una experiencia de navegación fluida.",
+          architecture: "Maquetación semántica estructurada en HTML5 y CSS3 puro con variables CSS personalizadas y diseño responsive sin librerías pesadas.",
+          features: [
+            "Diseño UI/UX de alta calidad orientado a marcas de lujo.",
+            "Secciones interactivas de catálogo y presentación de productos.",
+            "Optimización de tiempos de carga y estructura semántica SEO."
+          ]
+        },
+        4: {
+          fullDescription: "Simulador completo de la Liga BetPlay desarrollado en C#. Permite gestionar la tabla de posiciones, simular resultados de partidos, calcular estadísticas avanzadas y administrar plantillas de equipos.",
+          architecture: "Desarrollado con Programación Orientada a Objetos (POO), principios SOLID, uso intensivo de LINQ para consultas eficientes en memoria y patrones de arquitectura de consola.",
+          features: [
+            "Gestión de equipos, jugadores y cuerpo técnico.",
+            "Simulación de partidos con cálculo dinámico de marcadores.",
+            "Consultas avanzadas de estadísticas de torneo con LINQ.",
+            "Menú de consola interactivo y estructurado."
+          ]
+        },
+        5: {
+          fullDescription: "Herramienta de consola en Python para organizar y catalogar colecciones personales de entretenimiento (libros, películas y música). Permite gestionar inventarios de manera rápida y estructurada.",
+          architecture: "Programado bajo el paradigma de POO con manejo modular de clases, serialización de datos y validaciones de entrada de usuario.",
+          features: [
+            "Gestión CRUD de colecciones personales.",
+            "Sistema de valoraciones y comentarios por ítem.",
+            "Búsqueda rápida y filtrado por categoría o autor.",
+            "Persistencia de datos en disco."
+          ]
+        },
+        6: {
+          fullDescription: "Bot automatizado de Telegram integrado con n8n y Google Sheets. Actúa como un asistente virtual inteligente para la programación de citas, recordatorios y respuestas automáticas.",
+          architecture: "Flujo de trabajo orquestado en n8n mediante nodos de automatización, integración con la API de Telegram Bots y Webhooks, usando Google Sheets como base de datos en tiempo real.",
+          features: [
+            "Agendamiento automático de citas vía chat.",
+            "Sincronización instantánea con Google Sheets.",
+            "Sistema de notificaciones y recordatorios programados.",
+            "Manejo dinámico de estados de conversación."
+          ]
+        }
+      }
     },
     recommendations: {
       sectionNum: "04 /",
@@ -116,21 +179,25 @@ export const t = {
       barsLabel: "Nivel de dominio",
       techLabel: "Tecnologías",
       bars: [
+        { name: "C#",           level: 90, color: "#9b4f96" },
+        { name: ".NET / ASP.NET", level: 88, color: "#512bd4" },
         { name: "Python",       level: 90, color: "#3776ab" },
+        { name: "PHP",          level: 80, color: "#777bb4" },
         { name: "React",        level: 82, color: "#61dafb" },
         { name: "JavaScript",   level: 80, color: "#f7df1e" },
         { name: "Tailwind CSS", level: 82, color: "#06b6d4" },
-        { name: "C#",           level: 72, color: "#9b4f96" },
         { name: "MySQL",        level: 78, color: "#f59e0b" },
         { name: "Git",          level: 100, color: "#f97316" },
       ],
       techStack: [
+        { id: "csharp",   name: "C#" },
+        { id: "dotnet",   name: ".NET / ASP.NET" },
+        { id: "php",      name: "PHP" },
         { id: "react",    name: "React" },
         { id: "js",       name: "JavaScript" },
+        { id: "python",   name: "Python" },
         { id: "tailwind", name: "Tailwind" },
         { id: "html",     name: "HTML/CSS" },
-        { id: "python",   name: "Python" },
-        { id: "csharp",   name: "C#" },
         { id: "mysql",    name: "MySQL" },
         { id: "git",      name: "Git" },
         { id: "github",   name: "GitHub" },
@@ -153,7 +220,8 @@ export const t = {
       ],
     },
     contact: {
-      sectionNum: "04 — Contacto",
+      sectionNum: "07 /",
+      sectionLabel: "contacto",
       heading1: "Hagamos algo",
       heading2: "increíble juntos",
       subheading: "¿Tienes un proyecto, una idea o simplemente quieres conectar? Escríbeme y responderé lo antes posible.",
@@ -175,6 +243,12 @@ export const t = {
       successTitle: "¡Mensaje enviado!",
       successSub: "Gracias por escribir. Te responderé pronto.",
     },
+    footer: {
+      rights: "Todos los derechos reservados.",
+      backToTop: "Volver arriba",
+      builtWith: "Construido con React, Tailwind CSS y Framer Motion",
+      tagline: "Desarrollador Fullstack Junior enfocado en crear experiencias digitales modernas y eficientes."
+    }
   },
 
   en: {
@@ -182,8 +256,8 @@ export const t = {
       inicio: "Home",
       sobreMi: "About me",
       proyectos: "Projects",
-      habilidades: "Skills",
       recomendaciones: "Recommendations",
+      habilidades: "Skills",
       contacto: "Contact",
       disponible: "Available",
     },
@@ -226,14 +300,11 @@ export const t = {
       headline2: "things",
       headline3: "that",
       headline4: "matter.",
+      bio: "Hi, I'm Felipe — Fullstack developer focused on building modern, fast, and engaging experiences.",
       bioParts: [
-        { text: "I'm Felipe Corredor Silva, a young " },
+        { text: "Hi, I'm Felipe — " },
         { text: "Fullstack", highlight: true },
-        { text: " developer specializing in " },
-        { text: "Python", highlight: true },
-        { text: " and " },
-        { text: "C#", highlight: true },
-        { text: ", with experience building modern applications using React and Tailwind. I also work with JavaScript, HTML, and version control with Git, ensuring reliable and efficient projects. I stand out for my leadership skills, ability to work under pressure, agile thinking, and eagerness to learn new technologies. I enjoy tackling challenges and turning ideas into functional and attractive digital products, adding value to every project I'm part of." },
+        { text: " developer focused on building modern, fast, and engaging experiences." },
       ],
       quote: '"Clean code is not written by following rules, it\'s written by caring about the developer who comes next."',
       stackLabel: "Main stack",
@@ -252,6 +323,11 @@ export const t = {
       github: "GitHub",
       demo: "Demo",
       viewMore: "View more on GitHub",
+      viewDetails: "View details",
+      modalTitle: "Project Details",
+      modalArchitecture: "Architecture & Challenges",
+      modalFeatures: "Key Features",
+      modalClose: "Close",
       descriptions: {
         1: "Functional website that lets clients explore the hotel, check availability, and manage bookings, with an admin panel to control rooms and reservations.",
         2: "RESTful API for task management with JWT authentication, user roles, and room registration.",
@@ -260,6 +336,67 @@ export const t = {
         5: "Console app in Python to manage personal collections of books, films, or music, organizing titles, recording details, and rating each item simply and structurally.",
         6: "AgendaBot is a Telegram bot that manages appointments, tasks, and reminders using Google Sheets as a lightweight database and maintaining coherent flows with persistent states.",
       },
+      details: {
+        1: {
+          fullDescription: "Complete hotel management system designed to streamline customer navigation and internal management. Features an interactive booking module with real-time availability filtering and a restricted admin dashboard.",
+          architecture: "Architected using modular component patterns in vanilla JavaScript and optimized CSS, integrated with in-memory state storage and dynamic client-side persistence.",
+          features: [
+            "Interactive booking system with real-time availability search.",
+            "Administration panel for managing room catalogs and rates.",
+            "Fully responsive interface optimized for mobile devices.",
+            "Dynamic hotel service catalog."
+          ]
+        },
+        2: {
+          fullDescription: "Robust RESTful API for efficient task and team management. Provides authentication via JWT tokens, secure session management, and role-based access control (RBAC).",
+          architecture: "Built with Python and FastAPI adhering to clean architecture principles, strict schema validation via Pydantic, and relational MySQL database.",
+          features: [
+            "JWT Authentication and password hashing.",
+            "Role-Based Access Control (Admin/User).",
+            "Automatic interactive documentation via Swagger / OpenAPI.",
+            "Dynamic task filtering and pagination."
+          ]
+        },
+        3: {
+          fullDescription: "High-fidelity corporate website and landing page for LuxTime. Designed to convey elegance, luxury branding, and a smooth user experience.",
+          architecture: "Semantic HTML5 layout with custom CSS variables and responsive design without heavy external UI dependencies.",
+          features: [
+            "High-quality UI/UX design targeted for luxury brands.",
+            "Interactive catalog and product showcase sections.",
+            "Fast load-time optimization and SEO semantic structure."
+          ]
+        },
+        4: {
+          fullDescription: "Complete BetPlay League simulator developed in C#. Allows managing standings, simulating match results, calculating advanced statistics, and managing team rosters.",
+          architecture: "Developed with Object-Oriented Programming (OOP), SOLID principles, heavy LINQ usage for efficient in-memory queries, and console architectural patterns.",
+          features: [
+            "Team, player, and technical staff management.",
+            "Match simulation with dynamic score calculation.",
+            "Advanced tournament statistics queries using LINQ.",
+            "Structured interactive console menu."
+          ]
+        },
+        5: {
+          fullDescription: "Python console utility for organizing and cataloging personal entertainment collections (books, movies, and music). Facilitates fast and structured inventory management.",
+          architecture: "Programmed using OOP paradigms with modular class design, data serialization, and input validations.",
+          features: [
+            "CRUD management of personal collections.",
+            "Rating and review system per item.",
+            "Fast search and filtering by category or author.",
+            "Data persistence to disk."
+          ]
+        },
+        6: {
+          fullDescription: "Automated Telegram bot integrated with n8n and Google Sheets. Serves as a smart virtual assistant for scheduling appointments, reminders, and auto-replies.",
+          architecture: "Workflow orchestrated in n8n via automation nodes, integrating with Telegram Bot API Webhooks and utilizing Google Sheets as a live database.",
+          features: [
+            "Automated chat appointment scheduling.",
+            "Instant synchronization with Google Sheets.",
+            "Scheduled notification and reminder system.",
+            "Dynamic conversation state management."
+          ]
+        }
+      }
     },
     recommendations: {
       sectionNum: "04 /",
@@ -293,21 +430,25 @@ export const t = {
       barsLabel: "Proficiency level",
       techLabel: "Technologies",
       bars: [
+        { name: "C#",           level: 90, color: "#9b4f96" },
+        { name: ".NET / ASP.NET", level: 88, color: "#512bd4" },
         { name: "Python",       level: 90, color: "#3776ab" },
+        { name: "PHP",          level: 80, color: "#777bb4" },
         { name: "React",        level: 82, color: "#61dafb" },
         { name: "JavaScript",   level: 80, color: "#f7df1e" },
         { name: "Tailwind CSS", level: 82, color: "#06b6d4" },
-        { name: "C#",           level: 72, color: "#9b4f96" },
         { name: "MySQL",        level: 78, color: "#f59e0b" },
         { name: "Git",          level: 100, color: "#f97316" },
       ],
       techStack: [
+        { id: "csharp",   name: "C#" },
+        { id: "dotnet",   name: ".NET / ASP.NET" },
+        { id: "php",      name: "PHP" },
         { id: "react",    name: "React" },
         { id: "js",       name: "JavaScript" },
+        { id: "python",   name: "Python" },
         { id: "tailwind", name: "Tailwind" },
         { id: "html",     name: "HTML/CSS" },
-        { id: "python",   name: "Python" },
-        { id: "csharp",   name: "C#" },
         { id: "mysql",    name: "MySQL" },
         { id: "git",      name: "Git" },
         { id: "github",   name: "GitHub" },
@@ -330,7 +471,8 @@ export const t = {
       ],
     },
     contact: {
-      sectionNum: "04 — Contact",
+      sectionNum: "07 /",
+      sectionLabel: "contact",
       heading1: "Let's build something",
       heading2: "amazing together",
       subheading: "Have a project, an idea, or just want to connect? Write to me and I'll get back to you as soon as possible.",
@@ -352,5 +494,11 @@ export const t = {
       successTitle: "Message sent!",
       successSub: "Thanks for reaching out. I'll reply soon.",
     },
+    footer: {
+      rights: "All rights reserved.",
+      backToTop: "Back to top",
+      builtWith: "Built with React, Tailwind CSS, and Framer Motion",
+      tagline: "Junior Fullstack Developer focused on creating modern and efficient digital experiences."
+    }
   },
 };

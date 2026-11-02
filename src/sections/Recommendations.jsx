@@ -1,7 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import StarBackground from "../components/StarBackground";
-import { useLang } from "../context/LanguageContext";
+import { useLang } from "../context/useLang";
 import { t } from "../context/translations";
 import wen from "../assets/wen.jpg";
 import heili from "../assets/heili.jpeg";
@@ -11,231 +10,136 @@ import juan from "../assets/sebas.png";
 import tomas from "../assets/tomas.png";
 import juanCogollo from "../assets/cogollo.png";
 
-const photos = [wen, heili, dilan, panelita, juan, tomas, juanCogollo];
-const colors = ["#3b82f6", "#a855f7", "#10b981", "#f59e0b", "#ec4899", "#3b82f6", "#8b5cf6"];
-const initials = ["WA", "HB", "DC", "SG", "JT", "TC", "JC"];
+const EXPO = [0.22, 1, 0.36, 1];
+const MONO = { fontFamily: "'Space Mono', monospace" };
+const SANS = { fontFamily: "'DM Sans', sans-serif" };
+const DISPLAY = { fontFamily: "'Anton', sans-serif" };
+const C = { deep: "#191D23", accent: "#57707A", steel: "#7B919C", mist: "#989DAA", rose: "#C5BAC4", ink: "#DEDCDC" };
 
-function Stars({ count, max = 3 }) {
-  return (
-    <div className="flex items-center gap-1">
-      {Array.from({ length: max }).map((_, i) => (
-        <svg key={i} width="14" height="14" viewBox="0 0 24 24"
-          fill={i < count ? "#f59e0b" : "none"}
-          stroke={i < count ? "#f59e0b" : "#374151"}
-          strokeWidth="1.5">
-          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-        </svg>
-      ))}
-      <span className="text-[10px] text-gray-500 ml-1" style={{ fontFamily: "'Space Mono', monospace" }}>
-        {count}/3
-      </span>
-    </div>
-  );
-}
+// avatars keyed by name (EN list orders ids 6/7 differently than ES)
+const PHOTOS = {
+  "Wendy Angelica": wen, "Heiling Bernal": heili, "Dilan Corredor": dilan, "Sebastian Gualdron": panelita,
+  "Juan Tapias": juan, "Tomas Gonzalez": tomas, "Juan Cogollo": juanCogollo,
+};
+const COPY = {
+  es: { title: "Recomendaciones", kicker: "04 — Voces", list: "Índice", rating: "Valoración" },
+  en: { title: "Recommendations", kicker: "04 — Voices", list: "Index", rating: "Rating" },
+};
+const pad = (n) => String(n).padStart(2, "0");
+const initials = (name) => name.split(" ").map((w) => w[0]).slice(0, 2).join("");
 
-function Avatar({ person, size = "lg" }) {
-  const dim = size === "lg" ? "w-16 h-16" : "w-10 h-10";
-  const text = size === "lg" ? "text-lg" : "text-sm";
-  if (person.photo) {
-    return (
-      <img src={person.photo} alt={person.name}
-        className={`${dim} rounded-full object-cover border-2`}
-        style={{ borderColor: `${person.color}60` }} />
-    );
-  }
+function Stage({ person, index, total, copy }) {
+  const photo = PHOTOS[person.name];
   return (
-    <div className={`${dim} rounded-full flex items-center justify-center font-bold ${text} flex-shrink-0`}
-      style={{ background: `${person.color}18`, border: `1.5px solid ${person.color}40`, color: person.color, fontFamily: "'Space Mono', monospace" }}>
-      {person.initials}
-    </div>
-  );
-}
-
-function MainCard({ person, direction }) {
-  const variants = {
-    enter: (d) => ({ opacity: 0, x: d > 0 ? 60 : -60, scale: 0.97 }),
-    center: { opacity: 1, x: 0, scale: 1, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
-    exit: (d) => ({ opacity: 0, x: d > 0 ? -60 : 60, scale: 0.97, transition: { duration: 0.3 } }),
-  };
-  return (
-    <AnimatePresence mode="wait" custom={direction}>
-      <motion.div key={person.id} custom={direction} variants={variants}
-        initial="enter" animate="center" exit="exit"
-        className="relative rounded-2xl border border-white/8 bg-black/50 backdrop-blur-sm p-8 md:p-10"
-        style={{ boxShadow: `0 0 60px ${person.color}08` }}>
-        <div className="absolute top-0 left-8 right-8 h-px rounded-full"
-          style={{ background: `linear-gradient(90deg, transparent, ${person.color}60, transparent)` }} />
-        <div className="absolute top-6 right-8 opacity-8">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill={person.color}>
-            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
-            <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
-          </svg>
+    <AnimatePresence mode="wait" initial={false}>
+      <motion.figure key={person.name}
+        initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)", y: 18 }}
+        animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)", y: 0 }}
+        exit={{ opacity: 0, y: -10, transition: { duration: 0.25, ease: EXPO } }}
+        transition={{ duration: 0.8, ease: EXPO }}
+        className="relative h-full flex flex-col justify-center">
+        <span aria-hidden="true" className="pointer-events-none select-none absolute -top-6 md:-top-10 -left-2 leading-none"
+          style={{ ...DISPLAY, fontSize: "clamp(9rem, min(22vw, 34vh), 20rem)", color: "transparent", WebkitTextStroke: `1px ${C.rose}55` }}>
+          {pad(index + 1)}
+        </span>
+        <div className="relative flex items-center gap-4 mb-6 text-[11px] uppercase tracking-[0.3em]" style={{ ...MONO, color: C.steel }}>
+          <span style={{ color: C.rose }}>{pad(index + 1)}</span> / {pad(total)}
+          <span className="h-px w-10" style={{ background: C.accent }} />
+          <span>{person.relation}</span>
         </div>
-        <div className="mb-6"><Stars count={person.stars} /></div>
-        <blockquote className="text-gray-300 text-base md:text-lg leading-relaxed mb-8"
-          style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}>
-          "{person.text}"
+        <blockquote className="relative max-w-[52rem] leading-[1.38] mb-10"
+          style={{ ...SANS, fontWeight: 400, color: C.ink, fontSize: "clamp(1.15rem, min(1.85vw, 3.1vh), 2.05rem)" }}>
+          <span style={{ color: C.rose }}>“</span>{person.text}<span style={{ color: C.rose }}>”</span>
         </blockquote>
-        <div className="flex items-center gap-4">
-          <Avatar person={person} size="lg" />
-          <div>
-            <p className="text-white font-bold text-sm" style={{ fontFamily: "'Space Mono', monospace" }}>{person.name}</p>
-            <p style={{ color: person.color, fontFamily: "'Space Mono', monospace" }} className="text-xs mt-0.5">{person.role}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-[10px] text-gray-600" style={{ fontFamily: "'Space Mono', monospace" }}>{person.company}</span>
-              {person.company && <span className="w-1 h-1 rounded-full bg-gray-700" />}
-              <span className="text-[10px] text-gray-600" style={{ fontFamily: "'Space Mono', monospace" }}>{person.relation}</span>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+        <figcaption className="relative flex items-center gap-5">
+          <span className="w-16 h-16 md:w-[4.5rem] md:h-[4.5rem] shrink-0 overflow-hidden border" style={{ borderColor: `${C.steel}33`, background: C.deep }}>
+            {photo ? (
+              <img src={photo} alt={person.name} className="w-full h-full object-cover" />
+            ) : (
+              <span className="w-full h-full flex items-center justify-center text-sm" style={{ ...MONO, color: C.steel }}>{initials(person.name)}</span>
+            )}
+          </span>
+          <span className="flex flex-col gap-1.5 min-w-0">
+            <span className="uppercase leading-none" style={{ ...DISPLAY, color: C.ink, fontSize: "clamp(1.4rem, 2.2vw, 2rem)" }}>{person.name}</span>
+            <span className="text-[11px] uppercase tracking-[0.18em]" style={{ ...MONO, color: `${C.ink}d9` }}>
+              {person.role}{person.company ? ` · ${person.company}` : ""}
+            </span>
+            <span className="text-[11px] uppercase tracking-[0.18em]" style={{ ...MONO, color: C.mist }}>
+              {copy.rating} <span style={{ color: C.rose }}>{"★".repeat(person.stars)}</span> {person.stars} / 3
+            </span>
+          </span>
+        </figcaption>
+      </motion.figure>
     </AnimatePresence>
   );
 }
 
 function Recommendations() {
   const { lang } = useLang();
-  const tx = t[lang].recommendations;
+  const list = t[lang].recommendations.list;
+  const copy = COPY[lang] || COPY.es;
+  const [active, setActive] = useState(0);
+  const listRef = useRef(null);
+  const person = list[active] || list[0];
 
-  // Combinar textos traducidos con fotos/colores estáticos
-  const testimonials = tx.list.map((item, i) => ({
-    ...item,
-    photo: photos[i],
-    color: colors[i],
-    initials: initials[i],
-  }));
-
-  const [current, setCurrent] = useState(0);
-  const [direction, setDirection] = useState(1);
-  const [paused, setPaused] = useState(false);
-
-  const go = useCallback((idx) => {
-    setDirection(idx > current ? 1 : -1);
-    setCurrent((idx + testimonials.length) % testimonials.length);
-  }, [current, testimonials.length]);
-
-  const next = useCallback(() => go(current + 1), [go, current]);
-  const prev = useCallback(() => go(current - 1), [go, current]);
-
-  useEffect(() => {
-    if (paused) return;
-    const timer = setInterval(next, 6000);
-    return () => clearInterval(timer);
-  }, [next, paused]);
-
-  const person = testimonials[current];
-  const avg = (testimonials.reduce((s, item) => s + item.stars, 0) / testimonials.length).toFixed(1);
+  const onKey = (e) => {
+    let n = null;
+    if (["ArrowDown", "ArrowRight", "j"].includes(e.key)) n = (active + 1) % list.length;
+    if (["ArrowUp", "ArrowLeft", "k"].includes(e.key)) n = (active - 1 + list.length) % list.length;
+    if (n === null) return;
+    e.preventDefault();
+    setActive(n);
+  };
 
   return (
-    <section id="recomendaciones" className="relative w-full bg-black text-white overflow-hidden">
-      <StarBackground density={80} shootingStars={false} />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/50 pointer-events-none z-[1]" />
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#3b82f6]/30 to-transparent z-[2]" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[#3b82f6]/4 rounded-full blur-[140px] pointer-events-none z-[1]" />
+    <section id="recomendaciones-stage" className="relative w-full text-white overflow-hidden lg:h-[100dvh] flex flex-col pt-20 lg:pt-[5.5rem] pb-8"
+      style={{ background: `linear-gradient(180deg, ${C.deep} 0%, #07080A 55%, #000 100%)` }}>
+      <header className="shrink-0 px-6 md:px-12 lg:px-16 pb-6 flex items-end gap-6">
+        <h2 className="uppercase leading-[0.8]" style={{ ...DISPLAY, color: C.accent, fontSize: "clamp(2.4rem, min(5vw, 8vh), 4.5rem)" }}>{copy.title}</h2>
+        <div className="hidden md:flex items-center gap-4 pb-1 text-[11px] uppercase tracking-[0.3em]" style={{ ...MONO, color: C.steel }}>
+          <span>{copy.kicker}</span>
+          <span className="h-px w-16" style={{ background: `${C.steel}44` }} />
+          <span style={{ color: C.mist }}>{pad(list.length)}</span>
+        </div>
+      </header>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 md:px-16 py-28">
-
-        <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.5 }}
-          className="flex items-center gap-3 mb-6">
-          <span className="text-[#3b82f6] text-xs tracking-[0.3em] uppercase"
-            style={{ fontFamily: "'Space Mono', monospace" }}>{tx.sectionNum}</span>
-          <span className="w-12 h-px bg-[#3b82f6]/40" />
-          <span className="text-gray-500 text-xs tracking-[0.2em] uppercase"
-            style={{ fontFamily: "'Space Mono', monospace" }}>{tx.sectionLabel}</span>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-          <div>
-            <h2 className="text-4xl md:text-5xl font-bold leading-tight mb-3"
-              style={{ fontFamily: "'Space Mono', monospace" }}>
-              {tx.heading1}{" "}
-              <span className="relative inline-block">
-                <span className="text-[#3b82f6]">{tx.heading2}</span>
-                <span className="absolute -bottom-1 left-0 right-0 h-px bg-[#3b82f6]/40" />
-              </span>{" "}
-              {tx.heading3}
-            </h2>
-            <p className="text-gray-500 text-sm"
-              style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300 }}>{tx.subheading}</p>
-          </div>
-          <div className="flex items-center gap-6 shrink-0">
-            <div className="text-center">
-              <p className="text-3xl font-bold text-white" style={{ fontFamily: "'Space Mono', monospace" }}>{avg}</p>
-              <Stars count={3} max={3} />
-              <p className="text-[9px] text-gray-600 mt-1 tracking-wider uppercase"
-                style={{ fontFamily: "'Space Mono', monospace" }}>{tx.avgLabel}</p>
-            </div>
-            <div className="w-px h-12 bg-white/8" />
-            <div className="text-center">
-              <p className="text-3xl font-bold text-white" style={{ fontFamily: "'Space Mono', monospace" }}>{testimonials.length}</p>
-              <p className="text-[9px] text-gray-600 tracking-wider uppercase mt-1"
-                style={{ fontFamily: "'Space Mono', monospace" }}>{tx.reviewsLabel}</p>
-            </div>
-          </div>
-        </motion.div>
-
-        <div onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-          <MainCard person={person} direction={direction} />
+      <div className="flex-1 min-h-0 px-6 md:px-12 lg:px-16 grid lg:grid-cols-[1fr_20rem] xl:grid-cols-[1fr_22rem] gap-10 lg:gap-16 border-t pt-8" style={{ borderColor: `${C.steel}1f` }}>
+        <div className="relative min-h-[34rem] lg:min-h-0">
+          <Stage person={person} index={active} total={list.length} copy={copy} />
         </div>
 
-        <div className="flex items-center justify-between mt-8">
-          <div className="flex items-center gap-2">
-            {testimonials.map((item, i) => (
-              <button key={item.id} onClick={() => go(i)}
-                className="transition-all duration-300 rounded-full"
-                style={{
-                  width: i === current ? "24px" : "6px",
-                  height: "6px",
-                  background: i === current ? person.color : "rgba(255,255,255,0.15)",
-                }} />
-            ))}
+        <nav aria-label={copy.list} className="flex flex-col min-h-0">
+          <div className="shrink-0 flex items-center justify-between mb-2 text-[11px] uppercase tracking-[0.3em]" style={{ ...MONO, color: C.steel }}>
+            <span>{copy.list}</span>
+            <span><span style={{ color: C.rose }}>{pad(active + 1)}</span> / {pad(list.length)} · ↑↓</span>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] text-gray-600" style={{ fontFamily: "'Space Mono', monospace" }}>
-              {String(current + 1).padStart(2, "0")} / {String(testimonials.length).padStart(2, "0")}
-            </span>
-            <button onClick={prev}
-              className="w-10 h-10 rounded-xl border border-white/8 bg-black/40 text-gray-400 hover:border-white/20 hover:text-white hover:bg-white/6 transition-all duration-200 flex items-center justify-center">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
-            </button>
-            <button onClick={next}
-              className="w-10 h-10 rounded-xl border border-[#3b82f6]/30 bg-[#3b82f6]/8 text-[#3b82f6] hover:border-[#3b82f6]/60 hover:bg-[#3b82f6]/15 transition-all duration-200 flex items-center justify-center">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex items-center gap-3 mt-10 pt-8 border-t border-white/6">
-          <div className="flex -space-x-2">
-            {testimonials.map((item, i) => (
-              <button key={item.id} onClick={() => go(i)}
-                className="transition-all duration-200 rounded-full"
-                style={{
-                  transform: i === current ? "scale(1.15) translateY(-2px)" : "scale(1)",
-                  zIndex: i === current ? 10 : 1,
-                  outline: i === current ? `2px solid ${item.color}` : "2px solid transparent",
-                  outlineOffset: "1px",
-                }}>
-                <Avatar person={item} size="sm" />
-              </button>
-            ))}
-          </div>
-          <p className="text-[11px] text-gray-600" style={{ fontFamily: "'Space Mono', monospace" }}>
-            {testimonials.length} {tx.footerText}
-          </p>
-        </motion.div>
+          <ul ref={listRef} tabIndex={0} onKeyDown={onKey}
+            className="flex-1 min-h-0 overflow-y-auto overscroll-contain border-t outline-none focus-visible:ring-1 focus-visible:ring-[#C5BAC4]/30"
+            style={{ borderColor: `${C.steel}1f`, scrollbarWidth: "thin", scrollbarColor: `${C.accent} transparent` }}>
+            {list.map((p, i) => {
+              const on = i === active;
+              return (
+                <li key={p.name} className="border-b" style={{ borderColor: `${C.steel}1f` }}>
+                  <button type="button" tabIndex={-1} onClick={() => setActive(i)} aria-pressed={on}
+                    className="group relative w-full grid grid-cols-[2.25rem_1fr] items-baseline gap-3 py-3.5 text-left cursor-pointer outline-none">
+                    <span className="text-[11px] tracking-[0.2em]" style={{ ...MONO, color: on ? C.rose : `${C.steel}aa` }}>{pad(i + 1)}</span>
+                    <span className="flex flex-col min-w-0">
+                      <span className="uppercase leading-none truncate transition-transform duration-500 group-hover:translate-x-1.5"
+                        style={{ ...DISPLAY, fontSize: "clamp(1.1rem, 1.5vw, 1.4rem)", color: on ? C.ink : C.mist, opacity: on ? 1 : 0.7, transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)" }}>
+                        {p.name}
+                      </span>
+                      <span className="mt-1.5 text-[10px] uppercase tracking-[0.16em] truncate" style={{ ...MONO, color: `${C.steel}aa` }}>{p.role}</span>
+                    </span>
+                    <motion.span aria-hidden="true" className="absolute left-0 bottom-[-1px] h-px"
+                      initial={false} animate={{ width: on ? "100%" : "0%" }} transition={{ duration: 0.7, ease: EXPO }}
+                      style={{ background: C.rose }} />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
       </div>
-
-      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/8 to-transparent z-[2]" />
     </section>
   );
 }
